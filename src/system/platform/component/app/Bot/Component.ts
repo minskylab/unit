@@ -58,7 +58,7 @@ export const DEFAULT_STYLE = {
   color: 'current-color',
 }
 
-export default class Bot extends Element<HTMLElement, Props> {
+export default class Bot extends Element<HTMLDivElement, Props> {
   private _r: number = 0
 
   private _x: number = 0
@@ -175,7 +175,8 @@ export default class Bot extends Element<HTMLElement, Props> {
     this.addEventListener(makePointerLeaveListener(this._onPointerLeave))
 
     const position_observer = new PositionObserver(
-      (x, y, sx, sy, rx, ry, rz) => {
+      this.$system,
+      ({ x, y, sx, sy, rx, ry, rz }) => {
         this._container_x = x
         this._container_y = y
         this._container_sx = sx
@@ -460,6 +461,7 @@ export default class Bot extends Element<HTMLElement, Props> {
         laser_focus.classList.add('laser-focus')
 
         laser_focus.style.fill = mode_color
+        laser_focus.style.stroke = mode_color
         laser_focus.style.transformOrigin = '50% 50%'
 
         laser_focus.setAttribute('rx', '1')
@@ -926,7 +928,10 @@ export default class Bot extends Element<HTMLElement, Props> {
     for (const pointerId in this._laser_focus) {
       const laser_focus = this._laser_focus[pointerId]
       const laser_ray = this._laser_ray[pointerId]
+      
       laser_focus.style.fill = mode_color
+      laser_focus.style.stroke = mode_color
+
       laser_ray.style.stroke = mode_color
     }
   }

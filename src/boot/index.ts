@@ -1,10 +1,6 @@
-import { Gamepad } from '../client/gamepad'
-import { Keyboard } from '../client/keyboard'
-import { APINotSupportedError } from '../exception/APINotImplementedError'
-import { DisplayMediaAPINotSupported } from '../exception/DisplayMediaAPINotSupported'
 import { API, BootOpt, System } from '../system'
-import { UserMediaAPINotSupported } from '../system/platform/api/media/UserMedia/MediaDeviceAPINotSupported'
-import { Storage_ } from '../system/platform/api/storage/Storage_'
+import _classes from '../system/_classes'
+import _components from '../system/_components'
 import _specs from '../system/_specs'
 import { Dict } from '../types/Dict'
 import { IDownloadDataOpt } from '../types/global/IDownloadData'
@@ -110,9 +106,7 @@ export function noHost(): API {
       },
     },
     http: {
-      tab: function (opt): any {
-        throw new APINotSupportedError('Tab HTTP')
-      },
+     
       session: function (opt): any {
         throw new APINotSupportedError('Session HTTP')
       },
@@ -206,23 +200,30 @@ export function noHost(): API {
   return host
 }
 
+import { IGamepad } from '../types/global/IGamepad'
+import { IKeyboard } from '../types/global/IKeyboard'
+import { APINotSupportedError } from '../exception/APINotImplementedError'
+import { DisplayMediaAPINotSupported } from '../exception/DisplayMediaAPINotSupported'
+import { Storage_ } from '../system/platform/api/storage/Storage_'
+
+
 export function boot(opt: BootOpt = {}): System {
-  let { specs, components, classes, host: api = noHost() } = opt
+  let { specs, api = noHost() } = opt
 
   specs = { ...specs, ..._specs }
 
-  const keyboard: Keyboard = {
-    $pressed: [],
-    $repeat: false,
+  const keyboard: IKeyboard = {
+    pressed: [],
+    repeat: false,
   }
 
-  const gamepad: Gamepad[] = []
+  const gamepads: IGamepad[] = []
 
   const customEvent = new Set<string>()
   const context = []
   const input = {
     keyboard,
-    gamepad,
+    gamepads,
   }
 
   const flag = {
@@ -240,8 +241,8 @@ export function boot(opt: BootOpt = {}): System {
     input,
     context,
     specs,
-    classes,
-    components,
+    classes: _classes,
+    components: _components,
     pods: [],
     cache: flag,
     feature,
@@ -259,12 +260,10 @@ export function boot(opt: BootOpt = {}): System {
       component: {},
     },
     id: {
-      pbkey: {
-        tab: {},
-        session: {},
-        local: {},
-        cloud: {},
-      },
+      user: null,
+      token: null,
+      pbkey: [],
+      pvkey: {},
     },
     api,
   }
