@@ -195,6 +195,11 @@ export function noHost(): API {
       parse: function (str: string): Dict<any> {
         throw new Error('Function not implemented.')
       }
+    },
+    neural: {
+      detectCat: async (image: any): Promise<number> =>{
+        return 1
+      }
     }
   }
 

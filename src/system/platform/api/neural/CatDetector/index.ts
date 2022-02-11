@@ -3,18 +3,20 @@ import { Done } from '../../../../../Class/Functional/Done'
 import { Pod } from '../../../../../pod'
 import { System } from '../../../../../system'
 
-export interface I<T> {
-  text: string
+export interface I {
+  image: any
 }
 
-export interface O<T> {}
+export interface O {
+  probability: number
+}
 
-export default class CopyToClipboard<T> extends Functional<I<T>, O<T>> {
+export default class CatDetector extends Functional<I, O> {
   constructor(system: System, pod: Pod) {
     super(
       {
-        i: ['text'],
-        o: [],
+        i: ['image'],
+        o: ['probability'],
       },
       {},
       system,
@@ -22,20 +24,22 @@ export default class CopyToClipboard<T> extends Functional<I<T>, O<T>> {
     )
   }
 
-  async f({ text }: I<T>, done: Done<O<T>>): Promise<void> {
+  async f({ image }: I, done: Done<O>): Promise<void> {
     const {
       api: {
-        clipboard: { writeText },
+        neural: { detectCat },
       },
     } = this.__system
 
+    let probability;
+
     try {
-      await writeText(text)
+      probability = await detectCat(image)
     } catch (err) {
       done(undefined, err.message)
       return
     }
 
-    done({})
+    done({ probability})
   }
 }

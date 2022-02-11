@@ -55,6 +55,8 @@ import { COLOR_RED } from '../../theme'
 import { isPWA } from '../../util/web/isPWA'
 import init from './init'
 
+import {wasmExports} from '../../../system/wasm-scripts/emsc.js'
+
 export default function webRender(
   bundle: BundleSpec,
   opt: BootOpt = {}
@@ -707,6 +709,57 @@ export default function webRender(
     },
   }
 
+  const neural = {
+    //insert code here
+     
+    detectCat: async (image: any): Promise<number> =>{
+       
+      /*let a
+       let wasmExports = null;
+
+       let wasmMemory = new WebAssembly.Memory({initial: 256, maximum: 256});
+       
+       let wasmTable = new WebAssembly.Table({
+           'initial': 1,
+           'maximum': 1,
+           'element': 'anyfunc'
+       });
+       
+       let asmLibraryArg = { 
+           "__handle_stack_overflow": ()=>{},
+           "emscripten_resize_heap": ()=>{},
+           "__lock": ()=>{}, 
+           "__unlock": ()=>{},
+           "memory": wasmMemory, 
+           "table": wasmTable 
+       };
+       
+       var info = {
+           'env': asmLibraryArg,
+           'wasi_snapshot_preview1': asmLibraryArg
+         };
+       
+       async function loadWasm(){
+           let response = await fetch('../../../system/wasm/testfile');
+           let bytes = await response.arrayBuffer();
+           let wasmObj = await WebAssembly.instantiate(bytes, info);
+           wasmExports = wasmObj.instance.exports;
+       }
+       
+       loadWasm()
+       setTimeout(() => {
+        console.log(wasmExports.main())
+        a = wasmExports.main()
+    }, 3000);
+      */
+      let a = wasmExports.main()
+      return a
+      
+
+     
+    }
+  }
+
   const api: API = {
     storage,
     selection,
@@ -723,6 +776,7 @@ export default function webRender(
     speech,
     document: _document,
     querystring,
+    neural,
   }
 
   const _opt = deepMerge({ specs, classes, components, host: api }, opt)

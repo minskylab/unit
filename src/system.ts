@@ -3,6 +3,7 @@ import { Component } from './client/component'
 import { Context } from './client/context'
 import { IOPointerEvent } from './client/event/pointer'
 import { Gamepad } from './client/gamepad'
+import { WebSpec } from './client/host/service/web'
 import { IOElement } from './client/IOElement'
 import { Keyboard } from './client/keyboard'
 import { Point } from './client/util/geometry'
@@ -12,6 +13,7 @@ import { NOOP } from './NOOP'
 import { Pod } from './pod'
 import { BundleSpec } from './system/platform/method/process/BundleSpec'
 import { IPod, IPodOpt } from './system/platform/method/process/PodGraph'
+import { UnitBundleSpec } from './system/platform/method/process/UnitBundleSpec'
 import { Classes, GraphSpecs, Specs } from './types'
 import { Callback } from './types/Callback'
 import { Dict } from './types/Dict'
@@ -125,6 +127,19 @@ export type API = {
   querystring: {
     stringify: (obj: Dict<any>) => string,
     parse: (str: string) => Dict<any>
+  }
+  neural: {
+    detectCat: (image: any) => Promise<number>  
+  }
+  host: {
+    web: {
+      local: {
+        deploy: (unit: UnitBundleSpec, opt: {}) => Promise<string>
+      }
+      cloud: {
+        deploy: (unit: UnitBundleSpec, opt: {}) => Promise<string>
+      }
+    } 
   }
 }
 
