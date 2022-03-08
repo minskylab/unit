@@ -77,7 +77,7 @@ export type IO_SERVICE_API_INIT<T, K> = IO_INIT<IO_SERVICE_API<T>, K>
 
 export type IOInput = {
   keyboard: IKeyboard
-  gamepad: IGamepad[]
+  gamepad: Gamepad[]
 }
 
 export type IOMethod = Dict<Function>
@@ -99,6 +99,7 @@ export type API = {
     keyboard: {}
     gamepad: {
       getGamepads: () => Gamepad[]
+      getGamepad: (i:number)=> Gamepad
       addEventListener: (
         type: 'gamepadconnected' | 'gamepadisconnected',
         listener: (ev: GamepadEvent) => any,
@@ -211,7 +212,7 @@ export interface System {
   }
   input: {
     keyboard: IKeyboard
-    gamepads: IGamepad[]
+    gamepads: Gamepad[]
   }
   specs: Specs
   classes: Classes

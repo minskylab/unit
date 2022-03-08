@@ -2,8 +2,8 @@
   "name": "gamepad",
   "type": "`U`",
   "inputs": {
-    "id": {
-      "type": "string"
+    "i": {
+      "type": "number"
     }
   },
   "outputs": {},

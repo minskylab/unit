@@ -4,7 +4,7 @@ import { Pod } from '../../../../pod'
 import { System } from '../../../../system'
 
 export interface I {
-  id: string
+  i: number
 }
 
 export interface O {}
@@ -17,27 +17,18 @@ export default class GamePad extends Functional<I, O, GamepadEvents> {
   constructor(system: System, pod: Pod) {
     super(
       {
-        i: ['id'],
+        i: ['i'],
         o: [],
       },
-      {
-        input: {
-          service: {
-            ref: true,
-          },
-        },
-        output: {
-          charac: {
-            ref: true,
-          },
-        },
+      { 
+
       },
       system,
       pod
     )
   }
 
-  async f({ id }, done: Done<O>): Promise<void> {
+  async f({ i }, done: Done<O>): Promise<void> {
     done({})
   }
 
