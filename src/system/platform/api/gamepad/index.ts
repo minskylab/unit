@@ -29,7 +29,18 @@ export default class GamePad extends Functional<I, O, GamepadEvents> {
   }
 
   async f({ i }, done: Done<O>): Promise<void> {
-    done({})
+    const {
+      api: {
+        clipboard: { writeText },
+        input:{gamepad:{getGamepad}},
+      }
+    } = this.__system
+    try {
+      const gamePad = await getGamepad(i)
+    } catch (err) {
+      done(undefined, err.message)
+    }
+
   }
 
   d() {}

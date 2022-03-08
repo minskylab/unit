@@ -573,6 +573,9 @@ export function _webBoot(window: Window): System {
       getGamepads: () => {
         return navigator.getGamepads()
       },
+      getGamepad: (i) =>{
+        return system.input.gamepads[i]
+      },
       addEventListener: (
         type: 'gamepadconnected' | 'gamepadisconnected',
         listener: (ev: GamepadEvent) => any,

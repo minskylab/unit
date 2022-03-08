@@ -3,7 +3,6 @@ import { BootOpt, System } from '../system'
 import _classes from '../system/_classes'
 import _components from '../system/_components'
 import _specs from '../system/_specs'
-import { IGamepad } from '../types/global/IGamepad'
 import { IKeyboard } from '../types/global/IKeyboard'
 
 export function boot(opt: BootOpt = {}): System {
@@ -14,8 +13,11 @@ export function boot(opt: BootOpt = {}): System {
     repeat: false,
   }
 
-  const gamepads: IGamepad[] = []
-
+  const gamepads: Gamepad[] = api.input.gamepad.getGamepads()
+  api.input.gamepad.addEventListener('gamepadconnected',onGamepadConnected)
+  function onGamepadConnected (event:GamepadEvent) {
+    gamepads[event.gamepad.index] = event.gamepad
+  }
   const customEvent = new Set<string>()
   const context = []
   const input = {
