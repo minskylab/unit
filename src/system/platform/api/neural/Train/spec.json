@@ -1,0 +1,32 @@
+{
+  "name": "train",
+  "inputs": {
+    "O": {
+      "type": "`L`",
+      "ref": true
+    },
+    "D": {
+      "type": "`[number[],number[]][]`",
+      "ref": true
+    }
+  },
+  "outputs": {
+    "I": {
+      "type": "`number[]`",
+      "ref": true
+    }
+  },
+  "metadata": {
+    "icon": "repeat",
+    "description": "train a neural network",
+    "complexity": 2.655560291310713,
+    "tags": [
+      "f",
+      "neural"
+    ]
+  },
+  "id": "9620393a-71ea-4d08-9170-cd077ac6762f",
+  "base": true,
+  "type": "`U`&`L`",
+  "system": true
+}

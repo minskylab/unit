@@ -16428,6 +16428,8 @@ export class _GraphComponent extends Element<IHTMLDivElement, _Props> {
   }
 
   private _is_pin_pin_match(a: string, b: string): boolean {
+    return true
+
     // a pin is not compatible with itself
     if (a === b) {
       return false
@@ -16692,6 +16694,7 @@ export class _GraphComponent extends Element<IHTMLDivElement, _Props> {
     unit_id: string,
     pin_node_id: string
   ): boolean => {
+    return true
     const ref = this._is_pin_ref(pin_node_id)
     if (ref) {
       return this._is_ref_pin_unit_match(pin_node_id, unit_id)

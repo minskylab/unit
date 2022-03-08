@@ -1,0 +1,34 @@
+{
+  "name": "layer",
+  "inputs": {
+    "W": {
+      "type": "number[][]",
+      "ref": true
+    },
+    "N": {
+      "type": "`U`",
+      "ref": false
+    },
+    "L": {
+      "type": "`L`",
+      "ref": true
+    },
+    "n": {
+      "type": "number"
+    }
+  },
+  "outputs": {},
+  "metadata": {
+    "icon": "cpu",
+    "description": "custom neural network layer",
+    "complexity": 2.655560291310713,
+    "tags": [
+      "f",
+      "neural"
+    ]
+  },
+  "id": "9a7bad02-c007-4f14-b132-227d2c117cb6",
+  "base": true,
+  "type": "`U`&`L`",
+  "system": true
+}

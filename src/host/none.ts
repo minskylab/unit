@@ -247,8 +247,8 @@ export function noHost(): API {
     neural: {
       detectCat: function (image: any): Promise<number> {
         throw new Error('Function not implemented.')
-      }
-    }
+      },
+    },
   }
 
   return host

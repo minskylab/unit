@@ -186,7 +186,7 @@ export type API = {
   }
   neural: {
     detectCat: (image: any) => Promise<number>
-}
+  }
 }
 
 export interface System {

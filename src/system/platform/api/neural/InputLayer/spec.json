@@ -1,0 +1,23 @@
+{
+  "name": "input layer",
+  "inputs": {
+    "I": {
+      "type": "`number[]`",
+      "ref": true
+    }
+  },
+  "outputs": {},
+  "metadata": {
+    "icon": "brackets-curly",
+    "description": "neural network input layer",
+    "complexity": 2.655560291310713,
+    "tags": [
+      "f",
+      "neural"
+    ]
+  },
+  "id": "a4285523-4732-44a9-a338-bdf376839e39",
+  "base": true,
+  "type": "`U`&`L`",
+  "system": true
+}

@@ -31,7 +31,7 @@ export default class CatDetector extends Functional<I, O> {
       },
     } = this.__system
 
-    let probability;
+    let probability
 
     try {
       probability = await detectCat(image)
@@ -40,6 +40,6 @@ export default class CatDetector extends Functional<I, O> {
       return
     }
 
-    done({ probability})
+    done({ probability })
   }
 }

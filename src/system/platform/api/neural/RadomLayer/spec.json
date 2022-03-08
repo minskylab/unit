@@ -1,0 +1,34 @@
+{
+  "name": "random layer",
+  "inputs": {
+    "L": {
+      "type": "`number[]`",
+      "ref": true
+    },
+    "N": {
+      "type": "`U`"
+    },
+    "n": {
+      "type": "number"
+    }
+  },
+  "outputs": {
+    "W": {
+      "type": "`number[][]`",
+      "ref": true
+    }
+  },
+  "metadata": {
+    "icon": "brackets-curly",
+    "description": "neural network input layer",
+    "complexity": 2.655560291310713,
+    "tags": [
+      "f",
+      "neural"
+    ]
+  },
+  "id": "97b33e54-a05e-4f73-b553-29d2ce292f10",
+  "base": true,
+  "type": "`U`&`L`",
+  "system": true
+}
