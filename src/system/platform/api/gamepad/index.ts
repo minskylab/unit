@@ -13,7 +13,7 @@ type GamePad_EE = {}
 
 export type GamepadEvents = FunctionalEvents<GamePad_EE> & GamePad_EE
 
-export default class GamePad extends Functional<I, O, GamepadEvents> {
+export default class Gamepad extends Functional<I, O, GamepadEvents> {
   constructor(system: System, pod: Pod) {
     super(
       {
