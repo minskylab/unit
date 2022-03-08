@@ -184,6 +184,9 @@ export type API = {
     fetch: (opt: FetchJSONOpt) => Promise<any>
     send: (opt: {}) => void
   }
+  neural: {
+    detectCat: (image: any) => Promise<number>
+}
 }
 
 export interface System {
@@ -195,6 +198,7 @@ export interface System {
     dragAndDrop: Dict<any>
     pointerCapture: Dict<any>
     spriteSheetMap: Dict<boolean>
+    wasm: Dict<any>
   }
   id: {
     user: string | null

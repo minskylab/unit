@@ -1,0 +1,29 @@
+{
+    "name": "cat detector",
+    "inputs": {
+      "image": {
+        "type": "any",
+        "ref": true
+        
+      }
+      
+    },
+    "outputs": {
+      "probability": {
+        "type": "number"
+      }
+    },
+    "metadata": {
+      "icon": "image",
+      "description": "detects the presence of cat in an image",
+      "complexity": 2.655560291310713,
+      "tags": [
+        "f",
+        "neural"
+      ]
+    },
+    "id": "6fe452f2-2ec1-4ee2-887d-751c3697e6bfppp",
+    "base": true,
+    "type": "`U`",
+    "system": true
+  }

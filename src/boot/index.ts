@@ -27,6 +27,7 @@ export function boot(opt: BootOpt = {}): System {
     dragAndDrop: {},
     pointerCapture: {},
     spriteSheetMap: {},
+    wasm: {}
   }
 
   const feature = {}

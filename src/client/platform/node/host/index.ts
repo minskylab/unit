@@ -1,58 +1,64 @@
-import { Store } from '../client/store'
-import { APINotSupportedError } from '../exception/APINotImplementedError'
-import { DisplayMediaAPINotSupported } from '../exception/DisplayMediaAPINotSupported'
-import { MediaDevicesAPINotSupported } from '../exception/MediaDeviceAPINotSupported'
-import { SharedObject } from '../SharedObject'
-import { API, IO_SERVICE_API_INIT } from '../system'
-import { Storage_ } from '../system/platform/api/storage/Storage_'
-import { Dict } from '../types/Dict'
-import { IDownloadDataOpt } from '../types/global/IDownloadData'
+import { APINotSupportedError } from '../../../../exception/APINotImplementedError'
+import { DisplayMediaAPINotSupported } from '../../../../exception/DisplayMediaAPINotSupported'
+import { MediaDevicesAPINotSupported } from '../../../../exception/MediaDeviceAPINotSupported'
+import { noService, noStorage } from '../../../../host/none'
+import { API } from '../../../../system'
+import { Storage_ } from '../../../../system/platform/api/storage/Storage_'
+import { Dict } from '../../../../types/Dict'
+import { IDownloadDataOpt } from '../../../../types/global/IDownloadData'
 import {
   ISpeechGrammarList,
   ISpeechGrammarListOpt,
-} from '../types/global/ISpeechGrammarList'
+} from '../../../../types/global/ISpeechGrammarList'
 import {
   ISpeechRecognition,
   ISpeechRecognitionOpt,
-} from '../types/global/ISpeechRecognition'
+} from '../../../../types/global/ISpeechRecognition'
 import {
   ISpeechSynthesis,
   ISpeechSynthesisOpt,
-} from '../types/global/ISpeechSynthesis'
+} from '../../../../types/global/ISpeechSynthesis'
 import {
   ISpeechSynthesisUtterance,
   ISpeechSynthesisUtteranceOpt,
-} from '../types/global/ISpeechSynthesisUtterance'
-import { IStorage } from '../types/global/IStorage'
+} from '../../../../types/global/ISpeechSynthesisUtterance'
+import { IOElement } from '../../../IOElement'
 
-export function noStorage(name: string): IStorage {
+export function createElement<K extends keyof HTMLElementTagNameMap>(
+  tagName: K,
+  options?: ElementCreationOptions
+): HTMLElementTagNameMap[K] {
+  // @ts-ignore
   return {
-    getItem(key: string): string | null {
-      throw new APINotSupportedError(name)
+    prepend: (newChild: IOElement) => {},
+    // @ts-ignore
+    appendChild: (newChild: IOElement) => {},
+    // @ts-ignore
+    dispatchEvent: (event: any) => {},
+    addEventListener: (event: string, handler: (event: any) => void) => {},
+    removeEventListener: (event: string, handler: (event: any) => void) => {},
+    // @ts-ignore
+    getBoundingClientRect: () => {
+      return { x: 0, y: 0, width: 0, height: 0 }
     },
-    removeItem(key: string): void {
-      throw new APINotSupportedError(name)
-    },
-    setItem(key: string, value: string): void {
-      throw new APINotSupportedError(name)
-    },
-    clear(): void {
-      throw new APINotSupportedError(name)
-    },
+    isConnected: false,
+    offsetParent: null,
+    parentElement: null,
+    // @ts-ignore
+    style: {},
+    offsetLeft: 0,
+    offsetTop: 0,
+    offsetWidth: 0,
+    offsetHeight: 0,
+    scrollLeft: 0,
+    scrollTop: 0,
   }
 }
 
-export function noService<T>(
-  name: string
-): IO_SERVICE_API_INIT<SharedObject<Store<T>, {}>, {}> {
-  return () => {
-    throw new APINotSupportedError(`Local ${name}`)
-  }
-}
-
-export function noHost(): API {
+export function nodeHost(): API {
   const host: API = {
     storage: {
+      tab: () => new Storage_(noStorage('Tab Storage')),
       local: () => new Storage_(noStorage('Local Storage')),
       session: () => new Storage_(noStorage('Session Storage')),
       cloud: () => new Storage_(noStorage('Cloud Storage')),
@@ -84,28 +90,6 @@ export function noHost(): API {
     geolocation: {
       getCurrentPosition: () => {
         throw new APINotSupportedError('Geolocation')
-      },
-    },
-    input: {
-      keyboard: {},
-      gamepad: {
-        getGamepads: () => {
-          throw new APINotSupportedError('Gamepad')
-        },
-        addEventListener: (
-          type: 'gamepadconnected' | 'gamepadisconnected',
-          listener: (ev: GamepadEvent) => any,
-          options?: boolean | AddEventListenerOptions
-        ) => {
-          throw new APINotSupportedError('Gamepad')
-        },
-        removeEventListener: (
-          type: 'gamepadconnected' | 'gamepadisconnected',
-          listener: (ev: GamepadEvent) => any,
-          options?: boolean | AddEventListenerOptions
-        ): void => {
-          throw new APINotSupportedError('Gamepad')
-        },
       },
     },
     media: {
@@ -151,6 +135,9 @@ export function noHost(): API {
       },
     },
     channel: {
+      tab: function (opt): any {
+        throw new APINotSupportedError('Tab Channel')
+      },
       session: function (opt): any {
         throw new APINotSupportedError('Session Channel')
       },
@@ -162,6 +149,9 @@ export function noHost(): API {
       },
     },
     pod: {
+      tab: function (opt): any {
+        throw new APINotSupportedError('Tab Pod')
+      },
       session: function (opt): any {
         throw new APINotSupportedError('Session Pod')
       },
@@ -197,7 +187,7 @@ export function noHost(): API {
         tagName: K,
         options?: ElementCreationOptions
       ): HTMLElementTagNameMap[K] {
-        throw new Error() // TODO
+        return
       },
       createElementNS<K extends keyof SVGElementTagNameMap>(
         namespaceURI: 'http://www.w3.org/2000/svg',

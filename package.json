@@ -6,7 +6,7 @@
   "author": "Samuel Timbó <samuelmtimbo@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=16.13.1"
+    "node": ">=14.18.2"
   },
   "scripts": {
     "v": "ts-node src/script/v.ts",
@@ -33,6 +33,7 @@
     "build:sw": "ts-node src/script/build/sw.ts",
     "build:ext": "ts-node src/script/build/ext.ts",
     "build:meta": "ts-node src/script/build/meta/client.ts",
+    "build:wasm": "em++ src/neural.cpp -s WASM=1 -o public/_neural.html",
     "lint": "eslint src --ext .ts",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
@@ -59,6 +60,7 @@
     "@types/node": "17.0.0",
     "@typescript-eslint/eslint-plugin": "5.7.0",
     "@typescript-eslint/parser": "5.7.0",
+    "emscripten-sdk": "^2.0.14-1",
     "esbuild": "0.14.5",
     "eslint": "8.5.0",
     "eslint-config-prettier": "8.3.0",
