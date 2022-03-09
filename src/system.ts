@@ -104,12 +104,7 @@ export type API = {
         type: 'gamepadconnected' | 'gamepadisconnected',
         listener: (ev: GamepadEvent) => any,
         options?: boolean | AddEventListenerOptions
-      ) => void
-      removeEventListener: (
-        type: 'gamepadconnected' | 'gamepadisconnected',
-        listener: (ev: GamepadEvent) => any,
-        options?: boolean | AddEventListenerOptions
-      ) => void
+      ) => Unlisten
     }
   }
   speech: {
