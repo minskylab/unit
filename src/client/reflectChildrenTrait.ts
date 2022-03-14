@@ -22,7 +22,12 @@ export function reflectChildrenTrait(
   parentStyle: Style,
   childrenStyle: Style[]
 ): LayoutNode[] {
-  const { fontSize: parentFontSize, opacity: parentOpacity } = parentTrait
+  const {
+    x: parentX,
+    y: parentY,
+    fontSize: parentFontSize,
+    opacity: parentOpacity,
+  } = parentTrait
 
   const {
     display: parentDisplay = 'block',
@@ -77,8 +82,8 @@ export function reflectChildrenTrait(
   let postChildrenStyle: [number, Style][] = []
 
   for (const childStyle of childrenStyle) {
-    let x = 0
-    let y = 0
+    let x = parentX
+    let y = parentY
 
     let width = 0
     let height = 0
@@ -98,6 +103,9 @@ export function reflectChildrenTrait(
     const [pxTop, percentTop] = parseLayoutValue(childLeft)
     const [pxWidth, percentWidth] = parseLayoutValue(childWidth)
     const [pxHeight, percentHeight] = parseLayoutValue(childHeight)
+
+    width = (percentWidth * parentWidth) / 100 + pxWidth
+    height = (percentHeight * parentHeight) / 100 + pxHeight
 
     const [
       childTransformX,
@@ -130,19 +138,13 @@ export function reflectChildrenTrait(
 
     if (parentDisplay === 'block') {
       if (childPosition === 'relative') {
-        y = (total_relative_percent_height * parentHeight) / 100
-
-        width = (percentWidth * parentWidth) / 100 + pxWidth
-        height = (percentHeight * parentHeight) / 100 + pxHeight
+        y += (total_relative_percent_height * parentHeight) / 100
 
         x += childTransformX
         y += childTransformY
       } else if (childPosition === 'absolute') {
-        x = pxLeft + (percentLeft * parentWidth) / 100
-        y = pxTop + (percentTop * parentHeight) / 100
-
-        width = (percentWidth * parentWidth) / 100 + pxWidth
-        height = (percentHeight * parentHeight) / 100 + pxHeight
+        x += pxLeft + (percentLeft * parentWidth) / 100
+        y += pxTop + (percentTop * parentHeight) / 100
 
         x += childTransformX
         y += childTransformY
@@ -182,8 +184,8 @@ export function reflectChildrenTrait(
   let acc_relative_height = 0
 
   for (const [i, childStyle] of postChildrenStyle) {
-    let x = 0
-    let y = 0
+    let x = parentX
+    let y = parentY
 
     let width = 0
     let height = 0
@@ -210,8 +212,8 @@ export function reflectChildrenTrait(
             (parentWidth - total_relative_px_width)
           : 0
 
-      x = pxLeft
-      y = pxTop
+      x += pxLeft
+      y += pxTop
 
       width = pcWidth + pxWidth
     } else if (parentDisplay === 'flex') {
@@ -240,8 +242,8 @@ export function reflectChildrenTrait(
 
           height = pcHeight + pxHeight
 
-          x = acc_relative_width
-          y = pxTop
+          x += acc_relative_width
+          y += pxTop
 
           max_relative_height = Math.max(max_relative_height, height)
 
@@ -289,8 +291,8 @@ export function reflectChildrenTrait(
             acc_relative_width = width
           }
         } else if (childPosition === 'absolute') {
-          x = pxLeft + (percentLeft * parentWidth) / 100
-          y = pxTop + (percentTop * parentHeight) / 100
+          x += pxLeft + (percentLeft * parentWidth) / 100
+          y += pxTop + (percentTop * parentHeight) / 100
 
           width = (percentWidth * parentWidth) / 100 + pxWidth
           height = (percentHeight * parentHeight) / 100 + pxHeight
@@ -335,8 +337,8 @@ export function reflectChildrenTrait(
             height = pcHeight + pxHeight
           }
 
-          x = pxLeft
-          y = acc_relative_height + pxTop
+          x += pxLeft
+          y += acc_relative_height + pxTop
 
           max_relative_width = Math.max(max_relative_width, width)
 
@@ -384,8 +386,8 @@ export function reflectChildrenTrait(
             acc_relative_height = height
           }
         } else if (childPosition === 'absolute') {
-          x = pxLeft + (percentLeft * parentWidth) / 100
-          y = pxTop + (percentTop * parentHeight) / 100
+          x += pxLeft + (percentLeft * parentWidth) / 100
+          y += pxTop + (percentTop * parentHeight) / 100
 
           width = (percentWidth * parentWidth) / 100 + pxWidth
           height = (percentHeight * parentHeight) / 100 + pxHeight

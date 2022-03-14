@@ -141,7 +141,10 @@ export class PositionObserver implements IPositionObserver {
       height = offsetHeight
     }
 
-    const { f: update_local, abort } = animateThrottle(_update_local)
+    const { f: update_local, abort } = animateThrottle(
+      this._system,
+      _update_local
+    )
 
     this._abort = abort
 
@@ -258,8 +261,10 @@ export class PositionObserver implements IPositionObserver {
             _scrollTop = scrollTop
             update()
           }
-          const { f: _parentScrollListener } =
-            animateThrottle(parentScrollListener)
+          const { f: _parentScrollListener } = animateThrottle(
+            this._system,
+            parentScrollListener
+          )
           p.addEventListener('scroll', _parentScrollListener, {
             passive: true,
           })

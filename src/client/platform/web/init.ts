@@ -33,7 +33,9 @@ export default function webInit(
       const { keyCode, repeat } = event
 
       const index = system.input.keyboard.pressed.indexOf(keyCode)
+
       system.input.keyboard.repeat = repeat
+
       if (index === -1) {
         system.input.keyboard.pressed.push(keyCode)
       }

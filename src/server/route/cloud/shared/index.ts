@@ -1,7 +1,7 @@
 import * as bodyParser from 'body-parser'
 import { Router } from 'express'
-import { authHeaderMid } from '../../../middleware/authHeaderMid'
-import { logUrlMid } from '../../../middleware/log'
+import { authHeaderMid } from '../../../midd/auth'
+import { logUrlMid } from '../../../midd/log'
 import { SHARED } from '../CRUD'
 
 const app = Router()

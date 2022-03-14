@@ -8,7 +8,7 @@ import { System } from '../../../../system'
 import { Dict } from '../../../../types/Dict'
 import { IHTMLDivElement } from '../../../../types/global/dom'
 import { Unlisten } from '../../../../types/Unlisten'
-import CloudManager, {
+import CloudControl, {
   CLOUD_HEIGHT,
   CLOUD_WIDTH,
 } from '../../../platform/component/app/service/CloudControl/Component'
@@ -29,7 +29,7 @@ export const DEFAULT_STYLE = {}
 
 export default class GUIControlCloud extends Component<IHTMLDivElement, Props> {
   private _root: GUIControl
-  private _content: CloudManager
+  private _content: CloudControl
 
   constructor($props: Props, $system: System, $pod: Pod) {
     super($props, $system, $pod)
@@ -42,6 +42,7 @@ export default class GUIControlCloud extends Component<IHTMLDivElement, Props> {
         height: CLOUD_HEIGHT,
         x: 48,
         y: 96,
+        _x: 12,
         collapsed: true,
       },
       this.$system,
@@ -49,7 +50,7 @@ export default class GUIControlCloud extends Component<IHTMLDivElement, Props> {
     )
     this._root = root
 
-    const cloud = new CloudManager(
+    const cloud = new CloudControl(
       {
         style: {},
       },

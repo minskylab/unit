@@ -4,21 +4,16 @@ import parentElement from '../../../../client/platform/web/parentElement'
 import { getTransform, Zoom } from '../../../../client/zoom'
 import { Pod } from '../../../../pod'
 import { System } from '../../../../system'
-import { Dict } from '../../../../types/Dict'
 import { IHTMLDivElement } from '../../../../types/global/dom'
+import { Style } from '../../Props'
 import Div from '../Div/Component'
 import SVGG from '../svg/Group/Component'
 import SVGSVG from '../svg/SVG/Component'
 
-export type _Style = Dict<string>
-
-export interface _Props {
+export interface Props {
   className?: string
-  style?: _Style
+  style?: Style
   draggable?: boolean
-}
-
-export interface Props extends _Props {
   width: number
   height: number
   zoom: Zoom

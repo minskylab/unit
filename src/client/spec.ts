@@ -225,7 +225,7 @@ export function getSubComponentParentId(
   if (is_root_child) {
     return null
   } else {
-    // PERFORMANCE
+    // PERF
     for (const sub_component_id in subComponents) {
       const sub_component = subComponents[sub_component_id]
       const { children: sub_component_children } = sub_component

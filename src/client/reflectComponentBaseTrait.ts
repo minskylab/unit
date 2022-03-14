@@ -6,7 +6,6 @@ import {
 import { Style } from '../system/platform/Props'
 import { Dict } from '../types/Dict'
 import { Component } from './component'
-import { extractStyle } from './extractStyle'
 import { reflectChildrenTrait } from './reflectChildrenTrait'
 import { Size } from './util/geometry'
 
@@ -15,7 +14,8 @@ export const reflectComponentBaseTrait = (
   base: LayoutBase,
   style: Style,
   trait: LayoutNode,
-  measureText: (text: string, fontSize: number) => Size
+  measureText: (text: string, fontSize: number) => Size,
+  _extractStyle: (leaf_id: string, component: Component) => Style
 ): Dict<LayoutNode> => {
   const sub_component_id_slot: Dict<string> = {}
 
@@ -62,14 +62,31 @@ export const reflectComponentBaseTrait = (
       const sub_component_parent = component.getSubComponent(
         sub_component_parent_id
       )
-      const slot_name = sub_component_parent.getParentChildSlotId(sub_component)
-      const slot_sub_component_id =
-        sub_component_parent.getSlotSubComponentId(slot_name)
 
       leaf_parent_slot_path = [sub_component_parent_id]
 
-      if (slot_sub_component_id) {
-        leaf_parent_slot_path.push(slot_sub_component_id)
+      let c = sub_component
+      let p = sub_component_parent
+      let s = p.getParentRootSlotId(c)
+
+      while (p) {
+        const slot_sub_component_id = p.getSlotSubComponentId(s)
+        const slot_target = p.$slotTarget[s]
+
+        if (slot_sub_component_id) {
+          const slot_sub_component_parent_id = p.getSubComponentParentId(
+            slot_sub_component_id
+          )
+
+          leaf_parent_slot_path.push(
+            slot_sub_component_parent_id ?? slot_sub_component_id
+          )
+
+          p = p.getSubComponent(slot_sub_component_id)
+          s = slot_target
+        } else {
+          break
+        }
       }
     } else {
       leaf_parent_slot_path = leaf_parent_parent_id
@@ -96,7 +113,7 @@ export const reflectComponentBaseTrait = (
       leaf_comp.$element instanceof HTMLElement ||
       leaf_comp.$element instanceof SVGElement
     ) {
-      leaf_style = extractStyle(leaf_comp, measureText)
+      leaf_style = _extractStyle(leaf_id, leaf_comp)
     } else if (leaf_comp.$element instanceof Text) {
       const fontSize = slot.getFontSize()
 
@@ -155,7 +172,9 @@ export const reflectComponentBaseTrait = (
 
   let root_leaf_i = 0
   for (const leaf_id of root_leaf_id) {
+    // PERF
     all_leaf_trait[leaf_id] = { ...all_root_trait[root_leaf_i] }
+
     root_leaf_i++
   }
 
@@ -177,15 +196,7 @@ export const reflectComponentBaseTrait = (
     for (const leaf_id of slot_base) {
       const leaf_slot_trait = slot_base_trait[leaf_i]
 
-      all_leaf_trait[leaf_id] = {
-        x: leaf_slot_trait.x + slot_trait.x,
-        y: leaf_slot_trait.y + slot_trait.y,
-        width: leaf_slot_trait.width,
-        height: leaf_slot_trait.height,
-        fontSize: leaf_slot_trait.fontSize,
-        k: leaf_slot_trait.k,
-        opacity: leaf_slot_trait.opacity,
-      }
+      all_leaf_trait[leaf_id] = leaf_slot_trait
 
       leaf_i++
     }

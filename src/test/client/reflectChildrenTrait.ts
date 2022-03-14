@@ -1,5 +1,5 @@
-import * as assert from '../../util/assert'
 import { reflectChildrenTrait } from '../../client/reflectChildrenTrait'
+import * as assert from '../../util/assert'
 
 assert.deepEqual(
   reflectChildrenTrait(
@@ -365,7 +365,7 @@ assert.deepEqual(
       },
     ]
   ),
-  [{ x: 0, y: 0, width: 50, height: 50, fontSize: 10, k: 1, opacity: 1 }]
+  [{ x: 25, y: 25, width: 50, height: 50, fontSize: 10, k: 1, opacity: 1 }]
 )
 assert.deepEqual(
   reflectChildrenTrait(
@@ -425,7 +425,6 @@ assert.deepEqual(
   ),
   [{ x: 0, y: 0, width: 44, height: 100, fontSize: 10, k: 1, opacity: 1 }]
 )
-
 assert.deepEqual(
   reflectChildrenTrait(
     { x: 0, y: 0, width: 100, height: 100, fontSize: 10, k: 1, opacity: 1 },
@@ -449,7 +448,6 @@ assert.deepEqual(
     { x: 0, y: 0, width: 100, height: 100, fontSize: 10, k: 1, opacity: 1 },
   ]
 )
-
 assert.deepEqual(
   reflectChildrenTrait(
     { x: 0, y: 0, width: 100, height: 100, fontSize: 10, k: 1, opacity: 1 },
@@ -502,7 +500,6 @@ assert.deepEqual(
     { x: 40, y: 40, width: 40, height: 40, fontSize: 10, k: 1, opacity: 1 },
   ]
 )
-
 assert.deepEqual(
   reflectChildrenTrait(
     { x: 0, y: 0, width: 100, height: 100, fontSize: 10, k: 1, opacity: 1 },
@@ -537,4 +534,38 @@ assert.deepEqual(
     { x: 40, y: 0, width: 40, height: 40, fontSize: 10, k: 1, opacity: 1 },
     { x: 40, y: 40, width: 40, height: 40, fontSize: 10, k: 1, opacity: 1 },
   ]
+)
+assert.deepEqual(
+  reflectChildrenTrait(
+    { x: 0, y: 0, width: 100, height: 100, fontSize: 10, k: 1, opacity: 1 },
+    {},
+    [
+      {
+        position: 'absolute',
+        height: '50px',
+        width: '50px',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+      },
+    ]
+  ),
+  [{ x: 25, y: 25, width: 50, height: 50, fontSize: 10, k: 1, opacity: 1 }]
+)
+assert.deepEqual(
+  reflectChildrenTrait(
+    { x: 25, y: 25, width: 100, height: 100, fontSize: 10, k: 1, opacity: 1 },
+    {},
+    [
+      {
+        position: 'absolute',
+        height: '50px',
+        width: '50px',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+      },
+    ]
+  ),
+  [{ x: 50, y: 50, width: 50, height: 50, fontSize: 10, k: 1, opacity: 1 }]
 )

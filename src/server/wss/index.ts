@@ -1,11 +1,12 @@
+import { randomUUID, verify } from 'crypto'
 import * as http from 'http'
 import * as WebSocket from 'ws'
 import { EventEmitter } from '../../EventEmitter'
 import { NOOP } from '../../NOOP'
 import { Dict } from '../../types/Dict'
 import { uuidNotIn } from '../../util/id'
-import { parseCookies } from '../middleware/cookies'
-import { verifyAuthToken } from '../middleware/verifyAuthToken'
+import { InvalidMessageError } from '../error/InvalidMessageError'
+import { InvalidMessageTypeError } from '../error/InvalidMessageTypeError'
 import { Req } from '../req'
 import { WSS_PING_T } from './constant'
 
@@ -16,13 +17,19 @@ const wss_user_session_socket_alive: Dict<Dict<Dict<boolean>>> = {}
 const wss_user_session_socket_count: Dict<Dict<number>> = {}
 let wss_socket_count: number = 0
 
-export interface Peer {
+export interface NotAuthPeer {
+  userId: null
+  sessionId: null
+  socketId: string
+}
+
+export interface AuthPeer {
   userId: string
   sessionId: string
   socketId: string
 }
 
-export function wsId(peer: Peer): string {
+export function wsId(peer: AuthPeer): string {
   const { userId, sessionId, socketId } = peer
   return `${userId}/${sessionId}/${socketId}`
 }
@@ -88,43 +95,20 @@ function removeUserSessionSocket(
   console.log('wss_connection_count', wss_socket_count)
 }
 
-// export const EMITTER = {
-//   server: new EventEmitter2(),
-//   cloud: new EventEmitter2(),
-//   user: new EventEmitter2(),
-// }
-
 export const emitter = new EventEmitter()
 
 export * from './server'
 
 export function start(server: http.Server) {
   server.on('upgrade', async function upgrade(req: Req, socket, head) {
-    const { headers } = req
-    const { cookie = '' } = headers
-    const cookies = parseCookies(cookie)
-    const { authToken, sessionId } = cookies
-
     function refuse() {
       socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
       socket.destroy()
     }
 
-    if (!sessionId) {
-      refuse()
-      return
-    }
-
-    req.sessionId = sessionId
-
     try {
-      // TODO deduplicate (authReq)
-      const user = await verifyAuthToken(authToken)
-
-      req.user = user
-
       wss.handleUpgrade(req, socket, head, function done(ws) {
-        wss.emit('connection', ws, req, user)
+        wss.emit('connection', ws, req)
       })
     } catch {
       refuse()
@@ -137,9 +121,7 @@ export function start(server: http.Server) {
   wss.on('connection', function connection(ws, req: Req) {
     const { user, sessionId } = req
 
-    const { userId: pbkey } = user
-
-    const userId = pbkey
+    const { userId } = user
 
     wss_user_session_socket[userId] = wss_user_session_socket[userId] || {}
     wss_user_session_socket_alive[userId] =
@@ -184,21 +166,73 @@ export function start(server: http.Server) {
 
     // console.log('wss_socket_count', wss_socket_count)
 
-    const peer: Peer = {
-      userId,
-      sessionId,
+    const secret = randomUUID()
+
+    let peer: NotAuthPeer | AuthPeer = {
+      userId: null,
+      sessionId: null,
       socketId,
     }
 
-    ws.on('message', function incoming(message) {
+    function handleAuth(action) {
+      const { userId, sessionId, signedSecret } = action
+
+      if (typeof userId !== 'string' || typeof signedSecret !== 'string') {
+        throw new Error('Invalid auth data')
+      }
+
+      const _secret = Buffer.from(secret)
+      const _signedSecret = Buffer.from(signedSecret)
+
+      const valid = verify('SHA256', _secret, userId, _signedSecret)
+
+      if (valid) {
+        peer.userId = userId
+        peer.sessionId = sessionId
+      }
+    }
+
+    async function handleAction(action): Promise<void> {
+      const { type, data } = action
+
+      emitter.emit(type, data, peer, ws)
+    }
+
+    ws.on('message', async function incoming(message) {
       const data_str = message.toString()
+
       try {
-        const _data = JSON.parse(data_str)
+        let _data
+
+        try {
+          _data = JSON.parse(data_str)
+        } catch (err) {
+          throw new InvalidMessageError()
+        }
+
+        if (typeof _data !== 'object' || _data === null) {
+          throw new InvalidMessageError()
+        }
+
         const { type, data } = _data
-        emitter.emit(type, data, peer, ws)
+
+        switch (type) {
+          case 'auth': {
+            handleAuth(data)
+
+            break
+          }
+          case 'action': {
+            handleAction(data)
+
+            break
+          }
+          default: {
+            throw new InvalidMessageTypeError()
+          }
+        }
       } catch (err) {
-        console.log(err)
-        console.error('wss', 'message', 'failed to parse JSON', data_str)
+        ws.close()
       }
     })
 
@@ -236,4 +270,13 @@ export function start(server: http.Server) {
     console.log('wss', 'close')
     clearInterval(ping_interval)
   })
+}
+
+export function isValidSignedSecret(
+  userId: string,
+  secret: string,
+  signedSecret: string
+): boolean {
+  // TODO
+  return true
 }

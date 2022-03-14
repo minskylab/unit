@@ -7,7 +7,7 @@ import {
   writeJSON,
 } from 'fs-extra'
 import * as path from 'path'
-import { CloudDB, SharedDB, Store, UserDB } from '.'
+import { CloudDB, SharedDB, UserDB, UserStore } from '.'
 import { PATH_CWD } from '../../path'
 import { UserSpec } from '../model/UserSpec'
 
@@ -31,7 +31,7 @@ ensureDirSync(FILESYSTEM_DIR_DB_USER)
 ensureDirSync(FILESYSTEM_DIR_DB_USER_USER_ID_TO_USER)
 ensureDirSync(FILESYSTEM_DIR_DB_USER_USERNAME_TO_USER_ID)
 
-export function createFSStore<T>(dir: string, name: string): Store<T> {
+export function createFSStore<T>(dir: string, name: string): UserStore<T> {
   const FILESYSTEM_DIR_TABLE_PATH = path.join(dir, name)
 
   return {
@@ -148,7 +148,7 @@ export function createFSStore<T>(dir: string, name: string): Store<T> {
   }
 }
 
-export const FSUserDB: UserDB = {
+export const FSUserDB: UserDB<UserSpec> = {
   get: async function (user_id: string) {
     const user_id_filename = `${user_id}.json`
 

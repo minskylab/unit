@@ -1,10 +1,10 @@
 {
   "name": "fetch body",
   "units": {
-    "ncyrggjbc": {
+    "fetch": {
       "id": "c5856fdc-5154-46ab-a414-47f37af39da1"
     },
-    "wasnbohto": {
+    "prop": {
       "id": "9414421d-3376-4438-aa03-7afcd860972c",
       "input": {
         "key": {
@@ -15,13 +15,13 @@
     }
   },
   "merges": {
-    "ihkxhh": {
-      "ncyrggjbc": {
+    "0": {
+      "fetch": {
         "output": {
           "response": true
         }
       },
-      "wasnbohto": {
+      "prop": {
         "input": {
           "obj": true
         }
@@ -39,19 +39,19 @@
     ]
   },
   "inputs": {
-    "avbejlrtg": {
+    "url": {
       "pin": {
         "0": {
-          "unitId": "ncyrggjbc",
+          "unitId": "fetch",
           "pinId": "url"
         }
       },
       "type": "string"
     },
-    "qumzdhh": {
+    "opt": {
       "pin": {
         "0": {
-          "unitId": "ncyrggjbc",
+          "unitId": "fetch",
           "pinId": "options"
         }
       },
@@ -59,10 +59,10 @@
     }
   },
   "outputs": {
-    "scaqz": {
+    "body": {
       "pin": {
         "0": {
-          "unitId": "wasnbohto",
+          "unitId": "prop",
           "pinId": "value"
         }
       },

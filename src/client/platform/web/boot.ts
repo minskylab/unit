@@ -8,8 +8,8 @@ import { NOOP } from '../../../NOOP'
 import { sleep } from '../../../sleep'
 import { API, System } from '../../../system'
 import { Storage_ } from '../../../system/platform/api/storage/Storage_'
-import { BundleSpec } from '../../../system/platform/method/process/BundleSpec'
 import { GraphSpecs } from '../../../types'
+import { BundleSpec } from '../../../types/BundleSpec'
 import { Callback } from '../../../types/Callback'
 import { Dict } from '../../../types/Dict'
 import { IBluetoothDeviceOpt } from '../../../types/global/IBluetoothDevice'
@@ -17,6 +17,7 @@ import { IBluetoothServer } from '../../../types/global/IBluetoothServer'
 import { IChannel, IChannelOpt } from '../../../types/global/IChannel'
 import { IDisplayMediaOpt } from '../../../types/global/IDisplayMedia'
 import { IDownloadDataOpt } from '../../../types/global/IDownloadData'
+import { IDownloadURLOpt } from '../../../types/global/IDownloadURL'
 import { IFileHandler } from '../../../types/global/IFileHandler'
 import { IGeoPosition } from '../../../types/global/IGeoPosition'
 import { IHTTPServer, IHTTPServerOpt } from '../../../types/global/IHTTPServer'
@@ -54,7 +55,7 @@ import { attachSprite } from '../../render/attachSprite'
 import { attachSVG } from '../../render/attachSVG'
 import { ResizeObserver_ } from '../../ResizeObserver_'
 import { SYSTEM_ROOT_ID } from '../../SYSTEM_ROOT_ID'
-import { Size } from '../../util/geometry'
+import { Rect, Size } from '../../util/geometry'
 import { measureText } from '../../util/web/measureText'
 
 export default function webBoot(): System {
@@ -303,20 +304,26 @@ export function _webBoot(window: Window): System {
     charset,
     data,
   }: IDownloadDataOpt) => {
-    const dataStr = `data:${mimeType};charset=${charset},${encodeURIComponent(
+    const url = `data:${mimeType};charset=${charset},${encodeURIComponent(
       data
     )}`
+
+    return downloadURL({ name, url })
+  }
+
+  const downloadURL = async ({ name, url }: IDownloadURLOpt) => {
     const a = document.createElement('a')
     document.body.appendChild(a)
     a.download = name
-    a.href = dataStr
+    a.href = url
     a.click()
     document.body.removeChild(a)
   }
 
-  const file = {
+  const file: API['file'] = {
     showSaveFilePicker,
     showOpenFilePicker,
+    downloadURL,
     downloadData,
   }
 
@@ -413,7 +420,7 @@ export function _webBoot(window: Window): System {
     SpeechSynthesisUtterance,
   }
 
-  const media = {
+  const media: API['media'] = {
     getUserMedia: async (opt: IUserMediaOpt): Promise<MediaStream> => {
       if (!navigator || !navigator.mediaDevices) {
         throw new MediaDevicesAPINotSupported()
@@ -465,6 +472,31 @@ export function _webBoot(window: Window): System {
           }))
         })
     },
+    image: {
+      createImageBitmap: function (
+        image: ImageBitmapSource,
+        rect: Partial<Rect>,
+        opt: {}
+      ): Promise<ImageBitmap> {
+        if (
+          rect.x !== undefined &&
+          rect.y !== undefined &&
+          rect.width !== undefined &&
+          rect.height !== undefined
+        ) {
+          return window.createImageBitmap(
+            image,
+            rect.x,
+            rect.y,
+            rect.width,
+            rect.height,
+            opt
+          )
+        } else {
+          return window.createImageBitmap(image, opt)
+        }
+      },
+    },
   }
 
   const readText = async () => {
@@ -512,6 +544,15 @@ export function _webBoot(window: Window): System {
     local: () => new Storage_(localStorage),
     session: () => new Storage_(sessionStorage),
     cloud: () => new Storage_(cloudStorage),
+  }
+
+  const animation: API['animation'] = {
+    requestAnimationFrame: (callback) => {
+      return window.requestAnimationFrame(callback)
+    },
+    cancelAnimationFrame: (frame: number) => {
+      return window.cancelAnimationFrame(frame)
+    },
   }
 
   const _document = {
@@ -570,30 +611,39 @@ export function _webBoot(window: Window): System {
   const input: API['input'] = {
     keyboard: {},
     gamepad: {
-      getGamepads: () => {
-        return navigator.getGamepads()
+      getGamepad: (i) => {
+        const gamepads = navigator.getGamepads()
+        const gamepad = gamepads[i]
+        return gamepad
       },
       addEventListener: (
         type: 'gamepadconnected' | 'gamepadisconnected',
         listener: (ev: GamepadEvent) => any,
         options?: boolean | AddEventListenerOptions
       ) => {
-        return window.addEventListener(type, listener, options)
-      },
-      removeEventListener: (
-        type: 'gamepadconnected' | 'gamepadisconnected',
-        listener: (ev: GamepadEvent) => any,
-        options?: boolean | AddEventListenerOptions
-      ): void => {
-        return window.removeEventListener(type, listener, options)
+        window.addEventListener(type, listener, options)
+        return () => {
+          window.removeEventListener(type, listener, options)
+        }
       },
     },
   }
 
+  const init: API['init'] = {
+    boot: () => {
+      return _webBoot(window)
+    },
+  }
+
+  const db: API['db'] = window.indexedDB
+
   const api: API = {
+    init,
     storage,
     selection,
     file,
+    animation,
+    db,
     device,
     screen,
     bluetooth,
@@ -624,6 +674,20 @@ export function _webBoot(window: Window): System {
       },
     },
     host,
+    url: {
+      createObjectURL: async function (
+        object: Blob | MediaSource
+      ): Promise<string> {
+        return URL.createObjectURL(object)
+      },
+    },
+    uri: {
+      encodeURI: function (str: string): string {
+        // @ts-ignore
+        const { encodeURI } = window
+        return encodeURI(str)
+      },
+    },
   }
 
   const system = boot({ api })
@@ -631,11 +695,11 @@ export function _webBoot(window: Window): System {
   system.root = root
   system.mounted = true
 
+  attachCanvas(system)
+  attachSVG(system)
   attachSprite(system)
   attachApp(system)
-  attachCanvas(system)
   attachGesture(system)
-  attachSVG(system)
   attachLongPress(system)
 
   return system

@@ -8,15 +8,16 @@ import { VMSpec } from './client/host/service/vm'
 import { WebSpec } from './client/host/service/web'
 import { IOElement } from './client/IOElement'
 import { Store } from './client/store'
-import { Point, Size } from './client/util/geometry'
+import { Theme } from './client/theme'
+import { Point, Rect, Size } from './client/util/geometry'
 import { J } from './interface/J'
 import { U } from './interface/U'
 import { NOOP } from './NOOP'
 import { Pod } from './pod'
 import { SharedObject } from './SharedObject'
-import { BundleSpec } from './system/platform/method/process/BundleSpec'
-import { IPod, IPodOpt } from './system/platform/method/process/PodGraph'
+import { IPod, IPodOpt } from './system/platform/method/process/Start'
 import { Classes, GraphSpecs, Specs } from './types'
+import { BundleSpec } from './types/BundleSpec'
 import { Callback } from './types/Callback'
 import { Dict } from './types/Dict'
 import {
@@ -26,8 +27,9 @@ import {
 import { IChannel, IChannelOpt } from './types/global/IChannel'
 import { IDeviceInfo } from './types/global/IDeviceInfo'
 import { IDisplayMediaOpt } from './types/global/IDisplayMedia'
+import { IDownloadDataOpt } from './types/global/IDownloadData'
+import { IDownloadURLOpt } from './types/global/IDownloadURL'
 import { IFileHandler } from './types/global/IFileHandler'
-import { IGamepad } from './types/global/IGamepad'
 import { IGeoPosition } from './types/global/IGeoPosition'
 import { IHTTPServer, IHTTPServerOpt } from './types/global/IHTTPServer'
 import { IKeyboard } from './types/global/IKeyboard'
@@ -77,7 +79,7 @@ export type IO_SERVICE_API_INIT<T, K> = IO_INIT<IO_SERVICE_API<T>, K>
 
 export type IOInput = {
   keyboard: IKeyboard
-  gamepad: IGamepad[]
+  gamepad: Gamepad[]
 }
 
 export type IOMethod = Dict<Function>
@@ -91,25 +93,34 @@ export type APIChannel = IO_STORAGE_API_INIT<IChannel, IChannelOpt>
 export type APIPod = IO_STORAGE_API_INIT<IPod, IPodOpt>
 
 export type API = {
+  init: {
+    boot: () => System
+  }
+  animation: {
+    requestAnimationFrame: (callback: FrameRequestCallback) => number
+    cancelAnimationFrame: (frame: number) => void
+  }
   storage: APIStorage
+  db: IDBFactory
   http: APIHTTP
   channel: APIChannel
   pod: APIPod
   input: {
     keyboard: {}
     gamepad: {
-      getGamepads: () => Gamepad[]
+      getGamepad: (i: number) => Gamepad
       addEventListener: (
         type: 'gamepadconnected' | 'gamepadisconnected',
         listener: (ev: GamepadEvent) => any,
         options?: boolean | AddEventListenerOptions
-      ) => void
-      removeEventListener: (
-        type: 'gamepadconnected' | 'gamepadisconnected',
-        listener: (ev: GamepadEvent) => any,
-        options?: boolean | AddEventListenerOptions
-      ) => void
+      ) => Unlisten
     }
+  }
+  url: {
+    createObjectURL: (object) => Promise<string>
+  }
+  uri: {
+    encodeURI?: (str: string) => string
   }
   speech: {
     SpeechGrammarList: IO_INIT<ISpeechGrammarList, ISpeechGrammarListOpt>
@@ -123,7 +134,8 @@ export type API = {
   file: {
     showSaveFilePicker?: (opt: IFilePickerOpt) => Promise<IFileHandler[]>
     showOpenFilePicker?: (opt: IFilePickerOpt) => Promise<IFileHandler[]>
-    downloadData: (opt: {}) => Promise<void>
+    downloadURL: (opt: IDownloadURLOpt) => Promise<void>
+    downloadData: (opt: IDownloadDataOpt) => Promise<void>
   }
   screen: {
     devicePixelRatio?: number
@@ -146,6 +158,13 @@ export type API = {
     getUserMedia: (opt: IUserMediaOpt) => Promise<MediaStream>
     getDisplayMedia: (opt: IDisplayMediaOpt) => Promise<MediaStream>
     enumerateDevices: () => Promise<IDeviceInfo[]>
+    image: {
+      createImageBitmap: (
+        image: ImageBitmapSource,
+        rect: Partial<Rect>,
+        opt: {}
+      ) => Promise<ImageBitmap>
+    }
   }
   selection: {
     containsSelection: (element: IOElement) => boolean
@@ -191,6 +210,7 @@ export interface System {
   root: HTMLElement | null
   customEvent: Set<string>
   context: Context[]
+  theme: Theme
   cache: {
     dragAndDrop: Dict<any>
     pointerCapture: Dict<any>
@@ -211,7 +231,7 @@ export interface System {
   }
   input: {
     keyboard: IKeyboard
-    gamepads: IGamepad[]
+    gamepads: Gamepad[]
   }
   specs: Specs
   classes: Classes
@@ -223,7 +243,6 @@ export interface System {
   }
   api: API
   method: {
-    encodeURI?: (str: string) => string
     showLongPress?: (
       screenX: number,
       screenY: number,

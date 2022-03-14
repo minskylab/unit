@@ -79,10 +79,6 @@ import { Stateful_EE } from '../Stateful'
 import { Unit, UnitEvents } from '../Unit'
 import { WaitAll } from '../WaitAll'
 
-export function isElement(unit: U): boolean {
-  return unit instanceof Element || (unit instanceof Graph && unit.element)
-}
-
 export type Graph_EE = G_EE & C_EE & Stateful_EE
 
 export type GraphEvents = UnitEvents<Graph_EE> & Graph_EE
@@ -93,7 +89,7 @@ export class Graph<I = any, O = any>
 {
   __ = ['U', 'C', 'G']
 
-  public element: boolean = false
+  private _element: boolean = false
 
   private _spec: GraphSpec
 
@@ -197,7 +193,7 @@ export class Graph<I = any, O = any>
 
     this.setupComponent(component)
 
-    this.element = render
+    this._element = render
 
     this.addListener('reset', this._reset)
     this.addListener('play', this._play)
@@ -501,13 +497,17 @@ export class Graph<I = any, O = any>
     }
   }
 
+  public isElement(): boolean {
+    return this._element
+  }
+
   public setElement(): void {
-    this.element = true
+    this._element = true
     this.emit('element')
   }
 
   public setNotElement(): void {
-    this.element = false
+    this._element = false
     this.emit('not_element')
   }
 
@@ -1197,7 +1197,10 @@ export class Graph<I = any, O = any>
     const children = {}
     for (const unitId in this._unit) {
       const unit = this.refUnit(unitId)
-      if (unit instanceof Element || (unit instanceof Graph && unit.element)) {
+      if (
+        unit instanceof Element ||
+        (unit instanceof Graph && unit.isElement())
+      ) {
         const unit_children = (unit as C).refChildren()
         if (unit_children !== undefined) {
           children[unitId] = unit_children
@@ -1638,7 +1641,7 @@ export class Graph<I = any, O = any>
     }
 
     if (unit instanceof Graph) {
-      if (unit.element) {
+      if (unit.isElement()) {
         this.injectSubComponent(unitId, unitSpec, unit)
 
         all_unlisten.push(
@@ -1816,7 +1819,10 @@ export class Graph<I = any, O = any>
       }
     }
 
-    if (unit instanceof Element || (unit instanceof Graph && unit.element)) {
+    if (
+      unit instanceof Element ||
+      (unit instanceof Graph && unit.isElement())
+    ) {
       this._removeSubComponent(unitId)
 
       this._componentRemove(unitId)
@@ -2350,19 +2356,6 @@ export class Graph<I = any, O = any>
       merges[mergeId][unitId][type] &&
       merges[mergeId][unitId][type]![pinId]
     )
-  }
-
-  public togglePinMerge(
-    mergeId: string,
-    unitId: string,
-    type: IO,
-    pinId: string
-  ) {
-    if (this.isPinMergedTo(mergeId, unitId, type, pinId)) {
-      this.removePinFromMerge(mergeId, unitId, type, pinId)
-    } else {
-      this.addPinToMerge(mergeId, unitId, type, pinId)
-    }
   }
 
   public setUnitPinConstant(

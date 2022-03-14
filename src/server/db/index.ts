@@ -2,7 +2,7 @@ import { Dict } from '../../types/Dict'
 import { UserSpec } from '../model/UserSpec'
 import { FSCloudDB, FSSharedDB, FSUserDB } from './filesystem'
 
-export async function connectDB(): Promise<DB> {
+export async function connectDB(): Promise<UnitDB> {
   return {
     // userDB: memoryUserDB,
     // cloudDB: memoryCloudDB,
@@ -13,13 +13,13 @@ export async function connectDB(): Promise<DB> {
   }
 }
 
-export type DB = {
-  userDB: UserDB
+export type UnitDB = {
+  userDB: UserDB<UserSpec>
   cloudDB: CloudDB
   sharedDB: SharedDB
 }
 
-export type Store<T> = {
+export type UserStore<T> = {
   create: (userId: string, id: string, entry: T) => Promise<T>
   get: (userId: string, id: string) => Promise<T>
   getAll: (userId: string) => Promise<T[]>
@@ -34,10 +34,10 @@ export type SharedEntrySpec = {
   entryId: string
 }
 
-export type CloudDB = Dict<Store<EntrySpec<any>>>
-export type SharedDB = Dict<Store<SharedEntrySpec>>
+export type CloudDB = Dict<UserStore<EntrySpec<any>>>
+export type SharedDB = Dict<UserStore<SharedEntrySpec>>
 
-export type UserDB<T = UserSpec> = {
+export type UserDB<T> = {
   create: (user: T) => Promise<T>
   patch: (pbKey: string, partial: Partial<T>) => Promise<T>
   get(pbKey: string): Promise<T | null>

@@ -59,8 +59,11 @@ export class Functional<
     }
   }
 
-  onRefInputData(name: string): void {
-    this._on_input_data(name)
+  private _on_input_invalid(name: string): void {
+    if (this._i_invalid_count === 1) {
+      this.i(name)
+      this._invalidate()
+    }
   }
 
   onDataInputData(name: string): void {
@@ -71,8 +74,32 @@ export class Functional<
     this._on_input_drop()
   }
 
+  onDataInputStart(name: string): void {
+    if (this._i_start_count === this._i_count) {
+      this._start()
+    }
+  }
+
+  onDataInputInvalid(name: string): void {
+    this._on_input_invalid(name)
+  }
+
+  onDataInputEnd(name: string): void {
+    if (this._i_start_count === this._i_count - 1) {
+      this._end()
+    }
+  }
+
+  onRefInputData(name: string): void {
+    this._on_input_data(name)
+  }
+
   onRefInputDrop(): void {
     this._on_input_drop()
+  }
+
+  onRefInputInvalid(name: string): void {
+    this._on_input_invalid(name)
   }
 
   private _on_data_output_drop = (name: string): void => {
@@ -89,25 +116,6 @@ export class Functional<
   i(name: string) {}
 
   d() {}
-
-  public onDataInputStart(name: string): void {
-    if (this._i_start_count === this._i_count) {
-      this._start()
-    }
-  }
-
-  public onDataInputInvalid(name: string): void {
-    if (this._i_invalid_count === 1) {
-      this.i(name)
-      this._invalidate()
-    }
-  }
-
-  public onDataInputEnd(name: string): void {
-    if (this._i_start_count === this._i_count - 1) {
-      this._end()
-    }
-  }
 
   private _backward_if_ready(): void {
     if (

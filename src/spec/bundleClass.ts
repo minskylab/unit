@@ -1,4 +1,4 @@
-import { UnitBundleSpec } from '../system/platform/method/process/UnitBundleSpec'
+import { UnitBundleSpec } from '../types/UnitBundleSpec'
 import { UnitClass } from '../types/UnitClass'
 
 export function bundleClass(Class: UnitClass, __bundle: UnitBundleSpec): void {

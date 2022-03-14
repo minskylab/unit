@@ -1,6 +1,6 @@
 import * as crypto from 'crypto'
 import { emitter } from '..'
-import { getWS, Peer, send, wsId } from '../..'
+import { AuthPeer, getWS, send, wsId } from '../..'
 import { Dict } from '../../../../types/Dict'
 
 const SECRET = 'wwa+aEIhIUYiSP0eCEswM9MUh0uHNFF14asEKn1d6Qw'
@@ -47,7 +47,7 @@ export function send_server_peer(id: string, type: string, data: any): void {
   })
 }
 
-emitter.addListener('peer', (_data, peer: Peer, ws) => {
+emitter.addListener('peer', (_data, peer: AuthPeer, ws) => {
   const { type, data } = _data
 
   const { userId } = peer

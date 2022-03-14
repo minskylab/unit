@@ -28,7 +28,7 @@
         }
       },
       "ref": true,
-      "type": "`U`&`C`&`V`&`PS`&`CS`",
+      "type": "`CS`&`CA`",
       "defaultIgnored": true
     }
   },
@@ -47,7 +47,11 @@
         "width": {},
         "height": {}
       },
-      "output": {},
+      "output": {
+        "canvas": {
+          "ignored": false
+        }
+      },
       "metadata": {
         "position": {
           "x": 105,

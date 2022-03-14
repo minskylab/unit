@@ -1,5 +1,5 @@
 import { addListeners } from '../../../../../../client/addListener'
-import { Component, findRef } from '../../../../../../client/component'
+import { Component } from '../../../../../../client/component'
 import mergeStyle from '../../../../../../client/component/mergeStyle'
 import { dragAndDrop } from '../../../../../../client/dnd'
 import { makeChangeListener } from '../../../../../../client/event/change'
@@ -11,6 +11,7 @@ import { makeClickListener } from '../../../../../../client/event/pointer/click'
 import { makePointerCancelListener } from '../../../../../../client/event/pointer/pointercancel'
 import { makePointerEnterListener } from '../../../../../../client/event/pointer/pointerenter'
 import { makePointerLeaveListener } from '../../../../../../client/event/pointer/pointerleave'
+import { findRef } from '../../../../../../client/findRef'
 import { SOCKET_CLOUD_EMITTER } from '../../../../../../client/host/socket'
 import { DEFAULT_SERVICE_STORE_TYPES } from '../../../../../../client/host/store'
 import { MAX_Z_INDEX } from '../../../../../../client/MAX_Z_INDEX'
@@ -24,6 +25,7 @@ import { SharedObjectClient } from '../../../../../../SharedObject'
 import { emptyBundleSpec } from '../../../../../../spec/emptyBundleSpec'
 import { emptyGraphSpec } from '../../../../../../spec/emptySpec'
 import { System } from '../../../../../../system'
+import { BundleSpec } from '../../../../../../types/BundleSpec'
 import { Dict } from '../../../../../../types/Dict'
 import { IHTMLDivElement } from '../../../../../../types/global/dom'
 import { Unlisten } from '../../../../../../types/Unlisten'
@@ -32,10 +34,9 @@ import { clone } from '../../../../../../util/object'
 import { getTextWidth } from '../../../../../../util/text/getPlainTextWidth'
 import forEachKeyValue from '../../../../../core/object/ForEachKeyValue/f'
 import CloudTabs from '../../../../../host/component/IconTabs/Component'
-import { BundleSpec } from '../../../../method/process/BundleSpec'
 import Div from '../../../Div/Component'
 import TextInput from '../../../value/TextInput/Component'
-import { enable_mode_keyboard } from '../../Graph/Component'
+import { enableModeKeyboard } from '../../Graph/enableModeKeyboard'
 import Minigraph from '../../Minigraph/Component'
 import Modes from '../../Modes/Component'
 
@@ -477,7 +478,7 @@ export default class GraphControl extends Component<IHTMLDivElement, Props> {
 
   private _enable_modes = (): void => {
     // console.log('GraphControl', '_enable_modes')
-    this._unlisten_mode_keyboard = enable_mode_keyboard(
+    this._unlisten_mode_keyboard = enableModeKeyboard(
       this._root,
       (mode: Mode) => {
         if (this._modes) {
@@ -599,6 +600,7 @@ export default class GraphControl extends Component<IHTMLDivElement, Props> {
     if (this._new_spec_item) {
       return
     }
+
     const { $theme } = this.$context
 
     const { section } = this._tabs
@@ -614,9 +616,11 @@ export default class GraphControl extends Component<IHTMLDivElement, Props> {
       // opacity: '0.5',
     })
     this.appendChild(spec_item, section)
+
     // Safari will not scroll if scrollTop is too high, so try scrollHeight
     this._tabs._list[section].$element.scrollTop =
       this._tabs._list[section].$element.scrollHeight
+
     this._new_spec_item = spec_item
   }
 

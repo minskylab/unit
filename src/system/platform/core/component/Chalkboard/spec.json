@@ -64,11 +64,12 @@
       "pin": {
         "0": {
           "unitId": "canvas",
-          "pinId": "ctx"
+          "pinId": "_self"
         }
       },
       "ref": true,
-      "type": "`U`&`C`&`V`&`PS`&`CS`"
+      "type": "`CS`&`CA`",
+      "defaultIgnored": true
     }
   },
   "units": {
@@ -520,7 +521,7 @@
     "14": {
       "canvas": {
         "output": {
-          "ctx": true
+          "_self": true
         }
       },
       "drawd": {

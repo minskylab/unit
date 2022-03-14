@@ -566,7 +566,7 @@ export class Primitive<
     this._forwarding_empty = false
   }
 
-  protected _forward_empty(name: string): void {
+  protected _forward_empty(name: keyof O): void {
     this._forwarding_empty = true
     const output = this._output[name]
     output.take()
@@ -579,7 +579,7 @@ export class Primitive<
     this._backwarding = false
   }
 
-  protected _backward(name: string): void {
+  protected _backward(name: keyof I): void {
     this._backwarding = true
     const input = this._input[name]
     input.pull()

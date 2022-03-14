@@ -6,6 +6,7 @@ import {
 import { ANIMATION_T_S } from '../../../../client/animation/ANIMATION_T_S'
 import { Component } from '../../../../client/component'
 import mergeStyle from '../../../../client/component/mergeStyle'
+import { dragOverTimeListener } from '../../../../client/dragOverTimeListener'
 import { makeCustomListener } from '../../../../client/event/custom'
 import { makeClickListener } from '../../../../client/event/pointer/click'
 import { makePointerCancelListener } from '../../../../client/event/pointer/pointercancel'
@@ -32,7 +33,6 @@ import { uuid } from '../../../../util/id'
 import clamp from '../../../core/relation/Clamp/f'
 import Div from '../../../platform/component/Div/Component'
 import Icon from '../../../platform/component/Icon/Component'
-import { dragOverTimeListener } from '../IconTabs/dragOverTimeListener'
 
 export interface Props {
   className?: string
@@ -72,24 +72,18 @@ export default class GUIControl extends Component<IHTMLDivElement, Props> {
 
     const { icon, width = 100, height = 100, style = {} } = this.$props
 
-    let { x = 0, y = 0, collapsed = true } = this.$props
+    let { x = 0, y = 0, collapsed = true, _x = 0, _y = 0 } = this.$props
 
     this._x = x
     this._y = y
 
     this._collapsed = collapsed
 
-    // if (this._collapsed) {
-    //   this._collapsed_x = this._x
-    //   this._collapsed_y = this._y
-    // } else {
-    // }
-
     this._collapsed_x = this._x
     this._collapsed_y = this._y
 
-    this._non_collapsed_x = this._x
-    this._non_collapsed_y = this._y
+    this._non_collapsed_x = this._x + COLLAPSED_WIDTH + 12 + _x
+    this._non_collapsed_y = this._y + _y
 
     const WR = COLLAPSED_WIDTH / width
     const HR = COLLAPSED_HEIGHT / height
@@ -140,26 +134,17 @@ export default class GUIControl extends Component<IHTMLDivElement, Props> {
           width: `${COLLAPSED_WIDTH}px`,
           height: `${COLLAPSED_HEIGHT}px`,
           borderColor: 'currentColor',
-          // borderRadius: '50%',
           backgroundColor,
-          transition: `left ${ANIMATION_T_S}s linear, top ${ANIMATION_T_S}s linear, width ${ANIMATION_T_S}s linear, height ${ANIMATION_T_S}s linear, border-color ${ANIMATION_T_S}s linear, border-radius ${ANIMATION_T_S}s linear, background-color ${ANIMATION_T_S}s linear`,
+          transition: linearTransition(
+            'left',
+            'top',
+            'width',
+            'height',
+            'border-color',
+            'border-radius',
+            'background-color'
+          ),
         })
-
-        // root.animate(
-        //   [
-        //     {
-        //       top: `${y}px`,
-        //       left: `${x}px`,
-        //       width: `33px`,
-        //       height: `33px`,
-        //       borderColor: 'currentColor',
-        //     },
-        //   ],
-        //   {
-        //     duration: ANIMATION_T_MS,
-        //     fill: 'forwards',
-        //   }
-        // )
 
         setTimeout(() => {
           mergeStyle(root, {
@@ -188,6 +173,8 @@ export default class GUIControl extends Component<IHTMLDivElement, Props> {
       } else {
         this.dispatchContextEvent('_iounapp_control_back', false)
       }
+
+      this.dispatchEvent('collapse')
     }
 
     const uncollapse = () => {
@@ -209,25 +196,17 @@ export default class GUIControl extends Component<IHTMLDivElement, Props> {
         width: `${width}px`,
         height: `${height}px`,
         borderColor: COLOR_NONE,
-        // borderRadius: '3px',
         backgroundColor: COLOR_NONE,
-        transition: `opacity ${ANIMATION_T_S}s linear, left ${ANIMATION_T_S}s linear, top ${ANIMATION_T_S}s linear, width ${ANIMATION_T_S}s linear, height ${ANIMATION_T_S}s linear, border-color ${ANIMATION_T_S}s linear, border-radius ${ANIMATION_T_S}s linear, background-color ${ANIMATION_T_S}s linear`,
+        transition: linearTransition(
+          'left',
+          'top',
+          'width',
+          'height',
+          'border-color',
+          'border-radius',
+          'background-color'
+        ),
       })
-
-      // root.animate(
-      //   [
-      //     {
-      //       top: `${y}px`,
-      //       left: `${x}px`,
-      //       width: `312px`,
-      //       height: `210px`,
-      //     },
-      //   ],
-      //   {
-      //     duration: ANIMATION_T_MS,
-      //     fill: 'forwards',
-      //   }
-      // )
 
       mergeStyle(container, {
         opacity: '1',
@@ -253,6 +232,8 @@ export default class GUIControl extends Component<IHTMLDivElement, Props> {
       })
 
       undim()
+
+      this.dispatchEvent('uncollapse')
     }
 
     const toggle_collapse = (): void => {
@@ -306,11 +287,9 @@ export default class GUIControl extends Component<IHTMLDivElement, Props> {
                 })
               }),
               makePointerUpListener(() => {
-                // alert('up')
                 release()
               }),
               makePointerCancelListener(() => {
-                // alert('cancel')
                 release()
               }),
             ])

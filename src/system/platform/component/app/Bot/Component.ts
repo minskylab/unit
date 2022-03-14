@@ -520,6 +520,12 @@ export default class Bot extends Element<IHTMLDivElement, Props> {
   }
 
   private _start_move = (): void => {
+    const {
+      api: {
+        animation: { requestAnimationFrame },
+      },
+    } = this.$system
+
     if (this._pointing_self_count > 0) {
       return
     }
@@ -536,6 +542,12 @@ export default class Bot extends Element<IHTMLDivElement, Props> {
   }
 
   public _move_tick = (): void => {
+    const {
+      api: {
+        animation: { requestAnimationFrame },
+      },
+    } = this.$system
+
     if (Math.abs(this._x - this._tx) > 1 || Math.abs(this._y - this._ty) > 1) {
       this._x += (this._tx - this._x) * ANIMATION_C
       this._y += (this._ty - this._y) * ANIMATION_C
@@ -549,6 +561,12 @@ export default class Bot extends Element<IHTMLDivElement, Props> {
   }
 
   private _start_sync = (): void => {
+    const {
+      api: {
+        animation: { requestAnimationFrame },
+      },
+    } = this.$system
+
     // console.log('Bot', '_start_sync')
     this._sync_animation_frame = requestAnimationFrame(this._sync_tick)
   }

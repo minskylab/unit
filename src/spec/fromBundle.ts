@@ -1,7 +1,7 @@
 import { Pod } from '../pod'
 import { System } from '../system'
-import { UnitBundleSpec } from '../system/platform/method/process/UnitBundleSpec'
 import { Classes, Specs } from '../types'
+import { UnitBundleSpec } from '../types/UnitBundleSpec'
 import { UnitClass } from '../types/UnitClass'
 import { bundleClass } from './bundleClass'
 import { fromId } from './fromId'

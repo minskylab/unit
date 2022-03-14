@@ -5,7 +5,7 @@ import { $Children } from './component/Children'
 import { $Component } from './interface/async/$Component'
 import { $EE } from './interface/async/$EE'
 import { $Graph } from './interface/async/$Graph'
-import { $PO } from './interface/async/$PO'
+import { $P } from './interface/async/$P'
 import { $U } from './interface/async/$U'
 import { Pod } from './pod'
 import { RemotePort } from './RemotePort'
@@ -505,7 +505,7 @@ export function asyncGraphFromPort(
       return $graph.$refUnit(data)
     }
 
-    $refPod(data: {}): $PO {
+    $refPod(data: {}): $P {
       return $graph.$refPod({})
     }
   }

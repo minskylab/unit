@@ -1,1 +1,3 @@
-export interface B {}
+export interface B {
+  blob(): Promise<Blob>
+}

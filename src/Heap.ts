@@ -236,6 +236,9 @@ export function refreshParent<T>(heap: Heap<T>, predicate): void {
 }
 
 export function findRoot<T>(node: Heap<T>): Heap<T> {
+  if (node === node.parent) {
+    debugger
+  }
   if (node.parent) {
     return findRoot(node.parent)
   } else {

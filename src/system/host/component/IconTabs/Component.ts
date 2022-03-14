@@ -1,5 +1,6 @@
 import { ANIMATION_T_S } from '../../../../client/animation/ANIMATION_T_S'
 import mergeStyle from '../../../../client/component/mergeStyle'
+import { dragOverTimeListener } from '../../../../client/dragOverTimeListener'
 import { Element } from '../../../../client/element'
 import { makeClickListener } from '../../../../client/event/pointer/click'
 import parentElement from '../../../../client/platform/web/parentElement'
@@ -7,10 +8,9 @@ import { Pod } from '../../../../pod'
 import { System } from '../../../../system'
 import { Dict } from '../../../../types/Dict'
 import { IHTMLDivElement } from '../../../../types/global/dom'
-import IOAuthWall from '../../../platform/component/app/service/IOAuthWallControl/Component'
+import LockControl from '../../../platform/component/app/service/LockControl/Component'
 import Div from '../../../platform/component/Div/Component'
 import Icon from '../../../platform/component/Icon/Component'
-import { dragOverTimeListener } from './dragOverTimeListener'
 
 export type Tab = {
   name: string
@@ -44,7 +44,7 @@ export default class CloudTabs extends Element<IHTMLDivElement, Props> {
   private _lists_comp: Div
 
   public _tab: Dict<Icon> = {}
-  public _list: Dict<Div | IOAuthWall> = {}
+  public _list: Dict<Div | LockControl> = {}
 
   private _lists_inner: Div
 
@@ -236,8 +236,8 @@ export default class CloudTabs extends Element<IHTMLDivElement, Props> {
   private _render_list = (
     tab: string,
     style: Dict<string> = {}
-  ): Div | IOAuthWall => {
-    let list: Div | IOAuthWall
+  ): Div | LockControl => {
+    let list: Div | LockControl
     style = {
       display: 'inline-block',
       // padding: '6px',
@@ -256,7 +256,7 @@ export default class CloudTabs extends Element<IHTMLDivElement, Props> {
         this.$pod
       )
     } else {
-      list = new IOAuthWall(
+      list = new LockControl(
         {
           style,
         },

@@ -46,6 +46,7 @@ export default class GUIControlKeyboard extends Component<
         height: 210,
         x: 48,
         y: 142,
+        _x: 24,
         collapsed: true,
       },
       this.$system,

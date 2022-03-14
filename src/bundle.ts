@@ -1,6 +1,6 @@
 import { getSpec, isSystemSpecId } from './client/spec'
-import { BundleSpec } from './system/platform/method/process/BundleSpec'
 import { GraphSpec, GraphSpecs, Specs } from './types'
+import { BundleSpec } from './types/BundleSpec'
 
 export function bundleSpec(spec: GraphSpec, specs: Specs): BundleSpec {
   const custom: GraphSpecs = {}

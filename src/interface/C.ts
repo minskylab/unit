@@ -1,6 +1,6 @@
 import { Component_ } from '../interface/Component'
-import { UnitBundleSpec } from '../system/platform/method/process/UnitBundleSpec'
 import { Dict } from '../types/Dict'
+import { UnitBundleSpec } from '../types/UnitBundleSpec'
 import { UnitClass } from '../types/UnitClass'
 
 export type C_J = {}

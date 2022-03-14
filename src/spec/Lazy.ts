@@ -11,7 +11,6 @@ import { Pod } from '../pod'
 import { State } from '../State'
 import { System } from '../system'
 import forEachKeyValue from '../system/core/object/ForEachKeyValue/f'
-import { UnitBundleSpec } from '../system/platform/method/process/UnitBundleSpec'
 import {
   GraphExposedPinSpec,
   GraphExposedPinsSpec,
@@ -27,6 +26,7 @@ import { Dict } from '../types/Dict'
 import { GraphClass } from '../types/GraphClass'
 import { GraphState } from '../types/GraphState'
 import { IO } from '../types/IO'
+import { UnitBundleSpec } from '../types/UnitBundleSpec'
 import { UnitClass } from '../types/UnitClass'
 import { fromSpec } from './fromSpec'
 
@@ -55,7 +55,7 @@ export function lazyFromSpec(
     public __ = ['U', 'G']
 
     public stateful: boolean = false // RETURN __stateful
-    public element: boolean = false // RETURN __element
+    public __element: boolean = false // RETURN __element
 
     private __graph: Graph
 
@@ -103,6 +103,11 @@ export function lazyFromSpec(
           this.__graph.reset()
         }
       })
+    }
+
+    isElement(): boolean {
+      this._ensure()
+      return this.__graph.isElement()
     }
 
     memAddMerge(
@@ -574,6 +579,11 @@ export function lazyFromSpec(
       return this.__graph.hasUnit(id)
     }
 
+    public hasMerge(id: string): boolean {
+      this._ensure()
+      return this.__graph.hasMerge(id)
+    }
+
     public getUnitSpec(unitId: string): GraphUnitSpec {
       this._ensure()
       return this.__graph.getUnitSpec(unitId)
@@ -783,16 +793,6 @@ export function lazyFromSpec(
     ) {
       this._ensure()
       return this.__graph.isPinMergedTo(mergeId, unitId, type, pinId)
-    }
-
-    public togglePinMerge(
-      mergeId: string,
-      unitId: string,
-      type: IO,
-      pinId: string
-    ) {
-      this._ensure()
-      return this.__graph.togglePinMerge(mergeId, unitId, type, pinId)
     }
 
     public setUnitPinConstant(

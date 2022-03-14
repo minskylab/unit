@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import * as cors from 'cors'
 import * as express from 'express'
 import * as http from 'http'

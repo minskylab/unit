@@ -2,7 +2,7 @@ import { Graph } from './Class/Graph'
 import { Pod } from './pod'
 import { fromSpec } from './spec/fromSpec'
 import { System } from './system'
-import { BundleSpec } from './system/platform/method/process/BundleSpec'
+import { BundleSpec } from './types/BundleSpec'
 
 export function spawn(system: System): Pod {
   const { pods } = system
@@ -18,7 +18,7 @@ export function spawn(system: System): Pod {
 }
 
 export function start(system: System, pod: Pod, bundle: BundleSpec): Graph {
-  const { spec, specs } = bundle
+  const { spec = {}, specs = {} } = bundle
 
   for (const spec_id in specs) {
     if (pod.specs[spec_id]) {

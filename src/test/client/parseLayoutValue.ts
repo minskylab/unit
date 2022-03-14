@@ -1,5 +1,5 @@
-import * as assert from '../../util/assert'
 import { parseLayoutValue } from '../../client/parseLayoutValue'
+import * as assert from '../../util/assert'
 
 assert.deepEqual(parseLayoutValue('6px'), [6, 0])
 assert.deepEqual(parseLayoutValue('100%'), [0, 100])

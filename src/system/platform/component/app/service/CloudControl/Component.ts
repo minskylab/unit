@@ -2,6 +2,7 @@ import { addListener } from '../../../../../../client/addListener'
 import { ANIMATION_T_S } from '../../../../../../client/animation/ANIMATION_T_S'
 import { Component } from '../../../../../../client/component'
 import mergeStyle from '../../../../../../client/component/mergeStyle'
+import { dragOverTimeListener } from '../../../../../../client/dragOverTimeListener'
 import { makeCustomListener } from '../../../../../../client/event/custom'
 import { makeShortcutListener } from '../../../../../../client/event/keyboard'
 import { makeClickListener } from '../../../../../../client/event/pointer/click'
@@ -22,7 +23,6 @@ import { Dict } from '../../../../../../types/Dict'
 import { IHTMLDivElement } from '../../../../../../types/global/dom'
 import { Unlisten } from '../../../../../../types/Unlisten'
 import callAll from '../../../../../../util/call/callAll'
-import { dragOverTimeListener } from '../../../../../host/component/IconTabs/dragOverTimeListener'
 import TextDiv from '../../../../core/component/TextDiv/Component'
 import Div from '../../../Div/Component'
 import Icon from '../../../Icon/Component'
@@ -165,7 +165,7 @@ const SERVICE = [
   },
 ]
 
-export default class CloudManager extends Component<IHTMLDivElement, Props> {
+export default class CloudControl extends Component<IHTMLDivElement, Props> {
   private _root: Div
   private _container: Div
   private _list: Div

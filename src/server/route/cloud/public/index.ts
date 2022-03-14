@@ -1,6 +1,6 @@
 import * as express from 'express'
 import { PATH_PUBLIC } from '../../../../path'
-import { logUrlMid } from '../../../middleware/log'
+import { logUrlMid } from '../../../midd/log'
 
 const app = express.Router()
 

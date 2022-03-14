@@ -1,26 +1,36 @@
 import { getPublicKeyList } from '../../../../../../api/keys'
+import { addListeners } from '../../../../../../client/addListener'
 import { linearTransition } from '../../../../../../client/animation/animation'
 import { ANIMATION_T_S } from '../../../../../../client/animation/ANIMATION_T_S'
 import { Component } from '../../../../../../client/component'
 import mergeProps from '../../../../../../client/component/mergeProps'
 import mergePropStyle from '../../../../../../client/component/mergeStyle'
+import { makeCustomListener } from '../../../../../../client/event/custom'
 import { makeClickListener } from '../../../../../../client/event/pointer/click'
+import { makePointerEnterListener } from '../../../../../../client/event/pointer/pointerenter'
+import { makePointerLeaveListener } from '../../../../../../client/event/pointer/pointerleave'
+import { findRef } from '../../../../../../client/findRef'
 import { randomNaturalBetween } from '../../../../../../client/math'
+import { Mode } from '../../../../../../client/mode'
 import parentElement from '../../../../../../client/platform/web/parentElement'
 import {
   COLOR_NONE,
-  COLOR_YELLOW,
+  getActiveColor,
+  getThemeModeColor,
   randomColorString,
 } from '../../../../../../client/theme'
 import { Pod } from '../../../../../../pod'
 import { System } from '../../../../../../system'
 import { Dict } from '../../../../../../types/Dict'
 import { IHTMLDivElement } from '../../../../../../types/global/dom'
+import { Unlisten } from '../../../../../../types/Unlisten'
 import { rangeArray } from '../../../../../../util/array'
 import Unplugged from '../../../../../host/component/Unplugged/Component'
 import TextDiv from '../../../../core/component/TextDiv/Component'
 import Div from '../../../Div/Component'
 import Icon from '../../../Icon/Component'
+import { enableModeKeyboard } from '../../Graph/enableModeKeyboard'
+import Modes from '../../Modes/Component'
 
 export interface Props {
   style?: Dict<string>
@@ -30,11 +40,9 @@ export const DEFAULT_STYLE = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  // justifyContent: 'center',
   borderWidth: '1px',
   borderStyle: 'solid',
   borderColor: 'currentColor',
-  // padding: '9px',
   borderRadius: '3px',
   overflowY: 'auto',
   overflowX: 'hidden',
@@ -52,26 +60,26 @@ export const BUTTON_STYLE = {
   borderColor: COLOR_NONE,
 }
 
-export default class User extends Component<IHTMLDivElement, Props> {
+export default class UserControl extends Component<IHTMLDivElement, Props> {
   private _root: Div
 
-  private _picture: Div
   private _unplugged: Unplugged
 
   private _hex_text: TextDiv
 
-  private _selector: Div
-  private _selector_handle: Div
-  private _selector_unplugged_list: Div
-  private _selector_unplugged_list_car: Div
-  private _selector_bullet_list: Div
-
   private _selected: number = 0
+  private _active: number = 0
+
+  private _pointer_inside: boolean = false
+
+  private _public_keys: string[] = []
 
   constructor($props: Props, $system: System, $pod: Pod) {
     super($props, $system, $pod)
 
     const { style } = $props
+
+    const { theme } = $system
 
     const root = new Div(
       {
@@ -79,19 +87,43 @@ export default class User extends Component<IHTMLDivElement, Props> {
           ...DEFAULT_STYLE,
           ...style,
         },
+        tabIndex: 0,
       },
       this.$system,
       this.$pod
     )
     this._root = root
 
+    this._root.addEventListeners([
+      makePointerEnterListener(() => {
+        // console.log('UserControl', 'on_pointer_enter')
+
+        this._pointer_inside = true
+
+        this._refresh_color()
+      }),
+      makePointerLeaveListener(() => {
+        // console.log('UserControl', 'on_pointer_leave')
+
+        this._pointer_inside = false
+
+        this._refresh_color()
+      }),
+      makeClickListener({
+        onClick: () => {
+          if (this._mode === 'data') {
+            this._set_active_identity(this._selected)
+          }
+        },
+      }),
+    ])
+
     const unplugged = new Unplugged(
       {
         style: {
           display: 'inline-block',
           width: '100%',
-          // height: 'calc(80% - 75px)',
-          height: 'calc(80% - 30px)',
+          height: 'calc(80% - 9px)',
           transition: linearTransition('color'),
           cursor: 'pointer',
         },
@@ -102,104 +134,25 @@ export default class User extends Component<IHTMLDivElement, Props> {
     unplugged.addEventListener(
       makeClickListener({
         onClick: async () => {
-          const {
-            api: {
-              clipboard: { writeText },
-            },
-          } = this.$system
+          if (this._mode === 'add') {
+            const {
+              api: {
+                clipboard: { writeText },
+              },
+            } = this.$system
 
-          const address = this._public_key_addr[this._selected]
+            const address = this._public_key_addr[this._selected]
 
-          try {
-            await writeText(`'${address}'`)
-          } catch (err) {
-            // swallow
+            try {
+              await writeText(`'${address}'`)
+            } catch (err) {
+              // swallow
+            }
           }
         },
       })
     )
     this._unplugged = unplugged
-
-    const selector = new Div(
-      {
-        style: {
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          height: '20%',
-        },
-      },
-      this.$system,
-      this.$pod
-    )
-    this._selector = selector
-
-    const unplugged_list = new Div(
-      {
-        style: {
-          width: '100%',
-          height: '80%',
-          // whiteSpace: 'nowrap',
-        },
-      },
-      this.$system,
-      this.$pod
-    )
-    this._selector_unplugged_list = unplugged_list
-
-    const unplugged_list_car = new Div(
-      {
-        style: {
-          width: 'fit-content',
-          height: '100%',
-          whiteSpace: 'nowrap',
-          transform: 'translateX(0)',
-          transition: linearTransition('transform'),
-        },
-      },
-      this.$system,
-      this.$pod
-    )
-    this._selector_unplugged_list_car = unplugged_list_car
-    this._selector_unplugged_list.appendParentRoot(unplugged_list_car)
-
-    const selector_bullet_list = new Div(
-      {
-        style: {
-          width: 'fit-content',
-          height: 'fit-content',
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '12px',
-        },
-      },
-      this.$system,
-      this.$pod
-    )
-    this._selector_bullet_list = selector_bullet_list
-    this._selector.appendParentRoot(selector_bullet_list)
-
-    const selector_handle = new Div(
-      {
-        style: {
-          position: 'absolute',
-          opacity: '0',
-          width: '20px',
-          height: '20px',
-          background: 'none',
-          border: '2px solid currentColor',
-          borderRadius: '50%',
-          cursor: 'pointer',
-          pointerEvents: 'none',
-          transition: linearTransition('transform', 'color'),
-        },
-      },
-      this.$system,
-      this.$pod
-    )
-    this._selector_handle = selector_handle
-    this._selector.appendParentRoot(selector_handle)
 
     const hex_text = new TextDiv(
       {
@@ -214,6 +167,7 @@ export default class User extends Component<IHTMLDivElement, Props> {
           alignItems: 'center',
           transition: linearTransition('color'),
           cursor: 'pointer',
+          color: 'currentColor',
         },
       },
       this.$system,
@@ -259,13 +213,12 @@ export default class User extends Component<IHTMLDivElement, Props> {
 
     this.registerRoot(root)
 
-    // root.appendParentRoot(unplugged_list)
     root.registerParentRoot(unplugged)
     root.registerParentRoot(hex_text)
-    root.registerParentRoot(selector)
-    // root.registerParentRoot(scope_list)
     ;(async () => {
       const public_keys = await getPublicKeyList(this.$system)
+
+      this._public_keys = public_keys
 
       const public_key_active: boolean[] = [true, false, false]
 
@@ -279,114 +232,15 @@ export default class User extends Component<IHTMLDivElement, Props> {
 
       const l = public_keys.length
 
-      for (let i = 0; i < l; i++) {
-        const public_key = public_keys[i]
+      const active = public_key_active[0]
 
-        const active = public_key_active[i]
+      const color = active ? getActiveColor(theme) : 'currentColor'
 
-        const color = active ? COLOR_YELLOW : 'currentColor'
+      mergeProps(this._unplugged, {
+        id: this._public_key_code[0],
+      })
 
-        const selector_item_unplugged = new Unplugged(
-          {
-            style: {
-              display: 'inline-block',
-              width: '100%',
-              height: '100%',
-              color,
-            },
-          },
-          this.$system,
-          this.$pod
-        )
-        this._selector_unplugged_list_car.appendChild(selector_item_unplugged)
-
-        const selector_item_bullet = new Div(
-          {
-            style: {
-              width: '12px',
-              height: '12px',
-              background: 'currentColor',
-              color,
-              border: `2px solid currentColor`,
-              fill: 'currentColor',
-              borderRadius: '50%',
-              cursor: 'pointer',
-            },
-          },
-          this.$system,
-          this.$pod
-        )
-
-        selector_item_bullet.addEventListener(
-          makeClickListener({
-            onClick: () => {
-              const public_key = public_keys[i]
-
-              const active = public_key_active[i]
-
-              const color = active ? COLOR_YELLOW : 'currentColor'
-
-              mergePropStyle(this._unplugged, {
-                color,
-              })
-
-              mergePropStyle(this._hex_text, {
-                color,
-              })
-
-              mergePropStyle(selector_item_bullet, {
-                color,
-              })
-
-              mergePropStyle(this._selector_handle, {
-                color,
-              })
-
-              mergeProps(this._unplugged, {
-                id: this._public_key_code[i],
-              })
-
-              mergePropStyle(this._selector_handle, {
-                transform: `translate(${(12 + 12) * (i - 1)}px)`,
-              })
-
-              // mergePropStyle(this._selector_unplugged_list_car, {
-              //   transform: `translate(-${i * 100}%)`
-              // })
-
-              this._hex_text.setProp('value', this._public_key_addr[i])
-
-              this._selected = i
-            },
-          })
-        )
-
-        this._selector_bullet_list.appendChild(selector_item_bullet)
-      }
-
-      if (l > 0) {
-        const active = public_key_active[0]
-
-        const color = active ? COLOR_YELLOW : 'currentColor'
-
-        mergeProps(this._unplugged, {
-          id: this._public_key_code[0],
-        })
-
-        mergePropStyle(this._unplugged, {
-          color,
-        })
-
-        mergePropStyle(this._hex_text, {
-          color,
-        })
-
-        mergePropStyle(this._selector_handle, {
-          color,
-          opacity: '1',
-          transform: `translate(${(-l * 16) / 2}px)`,
-        })
-      }
+      this._set_color(color)
     })()
   }
 
@@ -449,5 +303,143 @@ export default class User extends Component<IHTMLDivElement, Props> {
   private _public_key_code: number[][]
   private _public_key_addr: string[]
 
-  onMount(): void {}
+  onMount(): void {
+    const modes = findRef(this, 'modes') as Modes | null
+
+    this._modes = modes
+
+    if (this._modes) {
+      this._enable_modes()
+    }
+
+    this._enable_mode_shortcut()
+
+    addListeners(this.$context, [
+      makeCustomListener('themechanged', () => {
+        this._refresh_color()
+      }),
+    ])
+  }
+
+  onUnmount() {
+    if (this._modes) {
+      this._disable_modes
+    }
+
+    this._disable_mode_shortcut()
+  }
+
+  private _unlisten_mode_keyboard: Unlisten | undefined = undefined
+
+  private _modes: Modes | null = null
+  private _mode: Mode = 'none'
+
+  private _unlisten_modes: Unlisten | undefined
+
+  private _enable_modes = (): void => {
+    if (this._modes) {
+      if (!this._unlisten_modes) {
+        // console.log('UserControl', '_enable_modes')
+        this._unlisten_modes = this._modes.addEventListeners([
+          makeCustomListener('entermode', this._on_enter_mode),
+        ])
+
+        this._modes.setProp('mode', this._mode)
+
+        this._mode = this._modes.getMode()
+      }
+    }
+  }
+
+  private _disable_modes = (): void => {
+    if (this._unlisten_modes) {
+      // console.log('Graph', '_disable_modes')
+      this._unlisten_modes()
+      this._unlisten_modes = undefined
+    }
+  }
+
+  private _enable_mode_shortcut = (): void => {
+    // console.log('UserControl', '_enable_mode_shortcut')
+    this._unlisten_mode_keyboard = enableModeKeyboard(
+      this._root,
+      (mode: Mode) => {
+        if (this._modes) {
+          this._modes.setProp('mode', mode)
+        }
+      }
+    )
+  }
+
+  private _disable_mode_shortcut = (): void => {
+    // console.log('UserControl', '_disable_mode_shortcut')
+    if (this._unlisten_mode_keyboard) {
+      this._unlisten_mode_keyboard()
+      this._unlisten_mode_keyboard = undefined
+    }
+  }
+
+  private _set_color = (color: string): void => {
+    mergePropStyle(this._unplugged, {
+      color,
+    })
+    mergePropStyle(this._hex_text, {
+      color,
+    })
+  }
+
+  private _set_default_color = () => {
+    const { $theme } = this.$context
+
+    if (this._selected === this._active) {
+      this._set_color(getActiveColor($theme))
+    } else {
+      // this._set_color(COLOR_WHITE)
+      this._set_color('currentColor')
+    }
+  }
+
+  private _refresh_color = () => {
+    const { $theme } = this.$context
+
+    if (this._mode === 'none') {
+      this._set_default_color()
+    } else if (this._mode === 'data') {
+      this._set_color(getThemeModeColor($theme, 'data', 'currentColor'))
+    } else if (this._mode === 'add') {
+      this._set_color(getThemeModeColor($theme, 'add', 'currentColor'))
+    } else if (this._mode === 'remove') {
+      this._set_color(getThemeModeColor($theme, 'remove', 'currentColor'))
+    } else if (this._mode === 'change') {
+      this._set_color(getThemeModeColor($theme, 'change', 'currentColor'))
+    }
+  }
+
+  private _on_enter_mode = ({ mode }: { mode: Mode }) => {
+    const prev_mode = this._mode
+
+    this._mode = mode
+
+    this._refresh_color()
+
+    // if (this._mode === 'add' && prev_mode !== 'add') {
+    //   this._add_new_identity()
+    // } else if (this._mode !== 'add' && prev_mode === 'add') {
+    //   this._remove_new_identity()
+    // }
+  }
+
+  private _set_active_identity(index: number) {
+    const { $theme } = this.$context
+
+    console.log('UserControl', '_set_active_identity', index)
+
+    if (this._active === index) {
+      this._active = -1
+
+      this._refresh_color()
+    } else {
+      this._active = index
+    }
+  }
 }

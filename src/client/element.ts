@@ -25,17 +25,6 @@ import { makePointerUpListener } from './event/pointer/pointerup'
 import { IOElement } from './IOElement'
 import { Listener } from './Listener'
 
-export function findRef(component: Component, name: string): Component | null {
-  let c: Component | null = component
-  while (c) {
-    if (c.$ref[name]) {
-      return c.$ref[name]
-    }
-    c = c.$parent
-  }
-  return null
-}
-
 export class Element<
   E extends IOElement = any,
   P extends object = {},

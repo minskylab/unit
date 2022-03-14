@@ -1,6 +1,6 @@
 import { ComponentClass, System } from '../system'
 import { GraphSpec } from '../types'
-import { componentClassFromSpec } from './component'
+import { componentClassFromSpec } from './componentClassFromSpec'
 import { isBaseSpec } from './id'
 import { getSpec } from './spec'
 

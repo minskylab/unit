@@ -4,7 +4,7 @@ import { Dict } from '../../types/Dict'
 import { GlobalRefSpec } from '../../types/GlobalRefSpec'
 import { IO } from '../../types/IO'
 import { Unlisten } from '../../types/Unlisten'
-import { $PO } from './$PO'
+import { $P } from './$P'
 import { $U, $U_C, $U_R, $U_W } from './$U'
 
 export const AsyncUCall = (unit: $U): $U_C => {
@@ -86,7 +86,7 @@ export const AsyncURef = (unit: $U): $U_R => {
     $refGlobalObj(data: GlobalRefSpec): $U {
       return unit.$refGlobalObj(data)
     },
-    $refPod(data: {}): $PO {
+    $refPod(data: {}): $P {
       return unit.$refPod({})
     },
   }

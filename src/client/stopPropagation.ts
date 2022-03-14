@@ -18,6 +18,8 @@ export function stopByPropagation($element: IOElement, name: string): void {
 }
 
 const ALL: string[] = [
+  'mousedown',
+  'touchdown',
   'pointerdown',
   'pointermove',
   'pointerup',

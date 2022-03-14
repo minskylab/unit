@@ -68,6 +68,8 @@ export default class Listen<T> extends Semifunctional<I<T>, O<T>> {
 
   d() {
     this._remove()
+
+    this._forward_empty('data')
   }
 
   onIterDataInputData(name: string, data: any) {

@@ -198,6 +198,12 @@ export default class Unplugged extends Component<IHTMLDivElement, Props> {
   private _animating: boolean[] = [false, false, false]
 
   private _reset = () => {
+    const {
+      api: {
+        animation: { requestAnimationFrame, cancelAnimationFrame },
+      },
+    } = this.$system
+
     const { id = [0, 0, 0, 0, 0, 0] } = this.$props
 
     for (let i = 0; i < 6; i += 2) {

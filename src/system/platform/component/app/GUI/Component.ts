@@ -301,11 +301,21 @@ export default class GUI extends Element<IHTMLDivElement, Props> {
     this.$element = $element
     this.$slot['default'] = foreground
     this.$slot['1'] = background
+    this.$slotId = {
+      default: 'foreground',
+      '1': 'background',
+    }
+    this.$slotTarget = {
+      default: 'default',
+      '1': 'default',
+    }
     this.$subComponent = {
-      control: gui,
+      gui,
+      control,
       modes,
       search,
       cabinet,
+      foreground,
       background,
     }
     this.$unbundled = false

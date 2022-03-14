@@ -16,7 +16,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "keyofStringsOnly": true,
-    "alwaysStrict": true
+    "alwaysStrict": true,
+    "skipDefaultLibCheck": true
   },
   "typeAcquisition": {
     "enable": false

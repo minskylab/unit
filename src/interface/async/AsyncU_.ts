@@ -12,7 +12,7 @@ import { IO } from '../../types/IO'
 import { stringifyPinData } from '../../types/stringifyPinData'
 import { Unlisten } from '../../types/Unlisten'
 import { mapObjVK } from '../../util/object'
-import { $PO } from './$PO'
+import { $P } from './$P'
 import { $U, $U_C, $U_R, $U_W } from './$U'
 import { Async } from './Async'
 
@@ -126,7 +126,7 @@ export const AsyncURef = (unit: Unit): $U_R => {
       const $ = $$refGlobalObj(__system, __global_id, __)
       return proxyWrap($, __)
     },
-    $refPod(data: {}): $PO {
+    $refPod(data: {}): $P {
       const pod = unit.refPod()
       const $pod = Async(pod, ['$PO'])
       return $pod

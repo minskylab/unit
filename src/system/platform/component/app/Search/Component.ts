@@ -506,14 +506,18 @@ export default class Search extends Element<IHTMLDivElement, Props> {
     this._input._input.blur()
   }
 
-  private _on_microphone_transcript = throttle((transcript: string) => {
-    // console.log('Search', '_on_microphone_transcript', transcript)
-    const value = transcript.toLowerCase().substr(0, 30)
-    this._input.setProp('value', value)
-    this._input_value = value
-    this._filter_list()
-    this._input.focus()
-  }, 100)
+  private _on_microphone_transcript = throttle(
+    this.$system,
+    (transcript: string) => {
+      // console.log('Search', '_on_microphone_transcript', transcript)
+      const value = transcript.toLowerCase().substr(0, 30)
+      this._input.setProp('value', value)
+      this._input_value = value
+      this._filter_list()
+      this._input.focus()
+    },
+    100
+  )
 
   private _on_input_keydown = (
     { keyCode, repeat }: IOKeyboardEvent,

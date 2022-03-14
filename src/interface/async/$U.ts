@@ -3,7 +3,7 @@ import { Dict } from '../../types/Dict'
 import { GlobalRefSpec } from '../../types/GlobalRefSpec'
 import { IO } from '../../types/IO'
 import { Unlisten } from '../../types/Unlisten'
-import { $PO } from './$PO'
+import { $P } from './$P'
 
 export const $U_METHOD_CALL = [
   'getGlobalId',
@@ -21,9 +21,7 @@ export const $U_METHOD_CALL = [
   'getRefInputData',
   'err',
 ]
-
 export const $U_METHOD_WATCH = ['watch']
-
 export const $U_METHOD_REF = ['refGlobalObj']
 
 export const $U_METHOD = [
@@ -71,7 +69,7 @@ export interface $U_W {
 
 export interface $U_R {
   $refGlobalObj(data: { __global_id: string; __: string[] }): $U
-  $refPod(data: {}): $PO
+  $refPod(data: {}): $P
 }
 
 export interface $U extends $U_C, $U_W, $U_R {}

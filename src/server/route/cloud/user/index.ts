@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { authHeaderMid } from '../../../middleware/authHeaderMid'
-import { logUrlMid } from '../../../middleware/log'
+import { authHeaderMid } from '../../../midd/auth'
+import { logUrlMid } from '../../../midd/log'
 import { Req } from '../../../req'
 
 const app = Router()

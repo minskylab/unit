@@ -3,7 +3,7 @@ import { boot } from '../../boot'
 import { AsyncGraph } from '../../interface/async/AsyncGraph'
 import { spawn, start } from '../../spawn'
 import { BootOpt, System } from '../../system'
-import { BundleSpec } from '../../system/platform/method/process/BundleSpec'
+import { BundleSpec } from '../../types/BundleSpec'
 
 export function renderBundle(
   root: HTMLElement,

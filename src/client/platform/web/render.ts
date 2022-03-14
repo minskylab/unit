@@ -1,7 +1,7 @@
 import { AsyncGraph } from '../../../interface/async/AsyncGraph'
 import { spawn, start } from '../../../spawn'
 import { System } from '../../../system'
-import { BundleSpec } from '../../../system/platform/method/process/BundleSpec'
+import { BundleSpec } from '../../../types/BundleSpec'
 import { render } from '../../render'
 import root from '../../root'
 import webBoot from './boot'

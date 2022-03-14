@@ -98,8 +98,8 @@ export const appendSubComponentChild = (
   state: State
 ): State => {
   const { subComponents } = state
-  const subComponent = subComponents[id]
-  const { children } = subComponent
+  const subComponent = subComponents[id] || {}
+  const { children = [] } = subComponent
   return assocPath(
     state,
     ['subComponents', id, 'children'],

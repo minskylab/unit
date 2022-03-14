@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { Dict } from '../../../types/Dict'
 import { connectDB } from '../../db'
-import { logUrlMid } from '../../middleware/log'
+import { logUrlMid } from '../../midd/log'
 import { Req, Res } from '../../req'
 import FILE from './file'
 import GRAPH from './graph'

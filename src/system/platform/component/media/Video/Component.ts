@@ -24,7 +24,7 @@ export const DEFAULT_STYLE = {
   // outline: 'none',
 }
 
-export default class Video extends Element<HTMLVideoElement, Props> {
+export default class VideoComp extends Element<HTMLVideoElement, Props> {
   private _video_el: HTMLVideoElement
 
   private prop_handler: PropHandler

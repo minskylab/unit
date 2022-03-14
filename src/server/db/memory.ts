@@ -1,4 +1,4 @@
-import { CloudDB, SharedDB, Store, UserDB } from '.'
+import { CloudDB, SharedDB, UserDB, UserStore } from '.'
 import { Dict } from '../../types/Dict'
 import { clone } from '../../util/object'
 import { UserSpec } from '../model/UserSpec'
@@ -12,7 +12,7 @@ export const DATA_SHARED: Dict<Dict<any[]>> = {}
 export function createMemoryStore<T>(
   name: string,
   DATA: Dict<Dict<any[]>>
-): Store<T> {
+): UserStore<T> {
   let table = DATA[name] || {}
 
   return {
@@ -55,7 +55,7 @@ export function createMemoryStore<T>(
   }
 }
 
-export const memoryUserDB: UserDB = {
+export const memoryUserDB: UserDB<UserSpec> = {
   get: (userId: string) => {
     const user = clone(DATA_PBKEY_TO_USER[userId] || null)
     return Promise.resolve(user)

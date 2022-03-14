@@ -64,7 +64,12 @@
           "pinId": "circle"
         }
       },
-      "type": "object"
+      "type": "{x:number,y:number,r:number}",
+      "metadada": {
+        "examples": [
+          "{x:50,y:50,r:25}"
+        ]
+      }
     },
     "d": {
       "pin": {
@@ -73,7 +78,12 @@
           "pinId": "d"
         }
       },
-      "type": "any[][]"
+      "type": "any[][]",
+      "metadata": {
+        "examples": [
+          "[]"
+        ]
+      }
     }
   },
   "outputs": {

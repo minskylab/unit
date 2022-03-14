@@ -2,13 +2,13 @@ import { $ } from '../../../../../Class/$'
 import { Functional } from '../../../../../Class/Functional'
 import { Done } from '../../../../../Class/Functional/Done'
 import { Graph } from '../../../../../Class/Graph'
-import { PO } from '../../../../../interface/PO'
+import { P } from '../../../../../interface/P'
 import { Pod } from '../../../../../pod'
 import { spawn } from '../../../../../spawn'
 import { System } from '../../../../../system'
 import { GraphSpecs } from '../../../../../types'
+import { BundleSpec } from '../../../../../types/BundleSpec'
 import { Dict } from '../../../../../types/Dict'
-import { BundleSpec } from '../BundleSpec'
 
 export interface I {
   opt: {
@@ -18,7 +18,7 @@ export interface I {
 }
 
 export interface O {
-  pod: PO
+  pod: P
 }
 
 export default class NewPod extends Functional<I, O> {
@@ -45,7 +45,7 @@ export default class NewPod extends Functional<I, O> {
 
     const __pod = spawn(this.__system)
 
-    const pod = new (class $Pod extends $ implements PO {
+    const pod = new (class $Pod extends $ implements P {
       getSpecs(): GraphSpecs {
         throw new Error('Method not implemented.')
       }

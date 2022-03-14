@@ -6,6 +6,7 @@ import { Component } from './component'
 import { IOElement } from './IOElement'
 import Listenable from './Listenable'
 import createFullwindow from './platform/web/createFullwindow'
+import { Theme } from './theme'
 
 export interface FullwindowOpt {
   showExitButton?: boolean
@@ -36,7 +37,7 @@ export interface Context extends Listenable {
   $rz: number
   $width: number
   $height: number
-  $theme: 'dark' | 'light'
+  $theme: Theme
   $color: string
   $fullwindow: Fullwindow[]
   $fullwindow_i: number
@@ -131,7 +132,7 @@ export function setHeight($context: Context, height: number): void {
   resize($context, $width, height)
 }
 
-export function setTheme($context: Context, $theme: 'light' | 'dark'): void {
+export function setTheme($context: Context, $theme: Theme): void {
   if ($context.$theme === $theme) {
     return
   }

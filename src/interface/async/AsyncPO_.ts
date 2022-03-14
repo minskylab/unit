@@ -1,12 +1,12 @@
-import { BundleSpec } from '../../system/platform/method/process/BundleSpec'
 import { Specs } from '../../types'
+import { BundleSpec } from '../../types/BundleSpec'
 import { Callback } from '../../types/Callback'
-import { PO } from '../PO'
+import { P } from '../P'
 import { $Graph } from './$Graph'
-import { $PO, $PO_C, $PO_R, $PO_W } from './$PO'
+import { $P, $P_C, $P_R, $P_W } from './$P'
 import { AsyncGraph } from './AsyncGraph'
 
-export const AsyncPOCall: (pod: PO) => $PO_C = (pod) => {
+export const AsyncPOCall: (pod: P) => $P_C = (pod) => {
   return {
     $getSpecs(data: {}, callback: Callback<Specs>): void {
       const specs = pod.getSpecs()
@@ -16,11 +16,11 @@ export const AsyncPOCall: (pod: PO) => $PO_C = (pod) => {
   }
 }
 
-export const AsyncPOWatch: (pod: PO) => $PO_W = (pod) => {
+export const AsyncPOWatch: (pod: P) => $P_W = (pod) => {
   return {}
 }
 
-export const AsyncPORef: (pod: PO) => $PO_R = (pod) => {
+export const AsyncPORef: (pod: P) => $P_R = (pod) => {
   return {
     $refGlobalUnit(data: { id: string; _: string[] }): void {},
 
@@ -32,7 +32,7 @@ export const AsyncPORef: (pod: PO) => $PO_R = (pod) => {
   }
 }
 
-export const AsyncPO: (pod: PO) => $PO = (pod: PO) => {
+export const AsyncPO: (pod: P) => $P = (pod: P) => {
   return {
     ...AsyncPOCall(pod),
     ...AsyncPOWatch(pod),

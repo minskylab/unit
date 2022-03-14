@@ -8,7 +8,7 @@ import { System } from '../../../../system'
 import { Dict } from '../../../../types/Dict'
 import { IHTMLDivElement } from '../../../../types/global/dom'
 import { Unlisten } from '../../../../types/Unlisten'
-import User from '../../../platform/component/app/service/UserControl/Component'
+import UserControl from '../../../platform/component/app/service/UserControl/Component'
 import GUIControl from '../GUIControl/Component'
 
 export interface Props {
@@ -26,7 +26,7 @@ export const DEFAULT_STYLE = {}
 
 export default class GUIControlUser extends Component<IHTMLDivElement, Props> {
   private _root: GUIControl
-  private _content: User
+  private _content: UserControl
 
   constructor($props: Props, $system: System, $pod: Pod) {
     super($props, $system, $pod)
@@ -38,9 +38,10 @@ export default class GUIControlUser extends Component<IHTMLDivElement, Props> {
         icon: 'user',
         style: {},
         width: 180,
-        height: 210,
+        height: 180,
         x: 48,
         y: 48,
+        _x: 0,
         collapsed: true,
       },
       this.$system,
@@ -48,7 +49,16 @@ export default class GUIControlUser extends Component<IHTMLDivElement, Props> {
     )
     this._root = root
 
-    const user = new User(
+    root.addEventListeners([
+      makeCustomListener('collapse', () => {
+        user.blur()
+      }),
+      makeCustomListener('uncollapse', () => {
+        user.focus()
+      }),
+    ])
+
+    const user = new UserControl(
       {
         style,
       },

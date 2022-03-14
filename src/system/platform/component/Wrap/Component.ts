@@ -162,15 +162,15 @@ export default class Wrap extends Element<IHTMLDivElement, Props, $Wrap> {
     at: number,
     _at: number
   ): void {
-    console.log(
-      'Wrap',
-      'memAppendParentChild',
-      component.constructor.name,
-      component.$globalId,
-      slotName,
-      at,
-      _at
-    )
+    // console.log(
+    //   'Wrap',
+    //   'memAppendParentChild',
+    //   component.constructor.name,
+    //   component.$globalId,
+    //   slotName,
+    //   at,
+    //   _at
+    // )
 
     const container = this._connected_parent_child_container(at)
 

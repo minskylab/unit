@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { Dict } from '../../../types/Dict'
 import { connectDB } from '../../db'
-import { validateBodyMid, validateParamsMid } from '../../middleware/validate'
+import { validateBodyMid, validateParamsMid } from '../../midd/validate'
 import { Req } from '../../req'
 import { userBroadcast } from '../../wss'
 import {

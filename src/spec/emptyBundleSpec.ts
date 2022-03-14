@@ -1,4 +1,4 @@
-import { BundleSpec } from '../system/platform/method/process/BundleSpec'
+import { BundleSpec } from '../types/BundleSpec'
 import { emptyGraphSpec } from './emptySpec'
 
 export const emptyBundleSpec: BundleSpec = {

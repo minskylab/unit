@@ -34,6 +34,7 @@ export function boot(opt: BootOpt = {}): System {
   const $system: System = {
     mounted: false,
     root: null,
+    theme: 'dark',
     customEvent,
     input,
     context,

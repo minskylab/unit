@@ -1,6 +1,6 @@
 import { Functional } from '../../../../../Class/Functional'
 import { Done } from '../../../../../Class/Functional/Done'
-import { PO } from '../../../../../interface/PO'
+import { P } from '../../../../../interface/P'
 import { Pod } from '../../../../../pod'
 import { System } from '../../../../../system'
 
@@ -9,7 +9,7 @@ export type I = {
 }
 
 export type O = {
-  graph: PO
+  graph: P
 }
 
 export default class CloudPod extends Functional<I, O> {

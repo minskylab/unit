@@ -648,7 +648,7 @@ export const AsyncGRef = (graph: Graph): $G_R => {
       const pod = graph.refPod()
       const spec = graph.getSpec()
       const render =
-        spec.component && !isEmptyObject(spec.component.subComponents)
+        spec.component && !isEmptyObject(spec.component.subComponents || {})
       render ? graph.setElement() : graph.setNotElement()
       // const parent = new Graph({}, {}, system, pod)
       const parentSpec = emptySpec({ id: newSpecId(system.specs) })

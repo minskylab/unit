@@ -1,3 +1,4 @@
+import { Component } from '../../client/component'
 import {
   appendChild,
   appendParentChild,
@@ -28,7 +29,7 @@ import { ION, Opt } from '../Unit'
 
 export type Element_EE = C_EE & { call: [{ method: string; data: any[] }] }
 
-export type ElementEvents<_EE extends Dict<any[]>> = StatefulEvents<
+export type ElementEE<_EE extends Dict<any[]>> = StatefulEvents<
   _EE & Element_EE
 > &
   Element_EE
@@ -37,14 +38,13 @@ export class Element<
     I = any,
     O = any,
     _J extends Dict<any> = {},
-    _EE extends ElementEvents<_EE> = ElementEvents<Element_EE>
+    _EE extends ElementEE<_EE> = ElementEE<Element_EE>,
+    _C extends Component = Component
   >
   extends Stateful<I, O, {}, _EE>
   implements E
 {
   __ = ['U', 'C', 'J', 'V', 'EE']
-
-  public element = true
 
   public _children: Component_[] = []
   public _root: Component_[] = []
@@ -52,6 +52,7 @@ export class Element<
   public _parent_children: Component_[] = []
   public _slot: Dict<Component_> = {}
   public _emitter: EventEmitter = new EventEmitter()
+  public _component: _C
 
   constructor(
     { i = [], o = [] }: ION,

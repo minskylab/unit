@@ -33,5 +33,19 @@ export function extractStyle(
     }
   }
 
+  if ($element instanceof HTMLCanvasElement) {
+    if (style['width'] === undefined) {
+      const { width } = $element
+
+      style['width'] = `${width}px`
+    }
+
+    if (style['height'] === undefined) {
+      const { height } = $element
+
+      style['height'] = `${height}px`
+    }
+  }
+
   return style
 }

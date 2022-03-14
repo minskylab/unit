@@ -7,7 +7,7 @@ import { Pod } from '../../../../../pod'
 import { System } from '../../../../../system'
 import { Unlisten } from '../../../../../types/Unlisten'
 import { listenGlobalComponent } from '../../../../globalComponent'
-import Video from '../../../component/media/Video/Component'
+import VideoComp from '../../../component/media/Video/Component'
 
 export interface I {
   media: $C & $PS & _
@@ -62,7 +62,7 @@ export default class RequestPictureInPicture extends Semifunctional<I, O> {
     listenGlobalComponent(
       this.__system,
       global_id,
-      async (component: Video | null): Promise<void> => {
+      async (component: VideoComp | null): Promise<void> => {
         if (component === null) {
           this._plunk()
         } else {

@@ -4,6 +4,9 @@ import { REGEX_CALC, REGEX_PERCENT, REGEX_PX } from './reflectChildrenTrait'
 export function parseLayoutValue(value: string): [number, number] {
   value = removeWhiteSpace(value)
   const percentTest = REGEX_PERCENT.exec(value)
+  if (value === '' || value === 'auto') {
+    return [0, 0]
+  }
   if (percentTest) {
     return [0, parseFloat(percentTest[1])]
   } else {
